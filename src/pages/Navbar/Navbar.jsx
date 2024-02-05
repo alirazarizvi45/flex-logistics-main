@@ -154,7 +154,7 @@ const Navbar = () => {
             display: "flex",
             flexDirection: { md: "row", xs: "column" },
             justifyContent: "space-around",
-            alignContent: "center",
+            alignItems: "center",
           }}
         >
           <Box>
@@ -175,7 +175,7 @@ const Navbar = () => {
             sx={{
               display: "flex",
               flexDirection: { sm: "row", xs: "column" },
-              gap: { md: "100px", xs: "0px" },
+              gap: { md: "150px", xs: "0px" },
               justifyContent: "space-between",
               alignItems: "center",
             }}
