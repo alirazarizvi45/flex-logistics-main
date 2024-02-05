@@ -18,7 +18,7 @@ const CommonButton = (props) => {
           },
 
           padding: "5px 20px",
-
+          fontFamily: "Noto Sans",
           backgroundColor: backgroundColor || "#F2B705",
           color: color || "#fff",
 

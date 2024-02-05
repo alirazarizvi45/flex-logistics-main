@@ -146,7 +146,7 @@ const Navbar = () => {
       <Box
         sx={{
           backgroundColor: "#373A41",
-          padding: { md: "0px ", xs: "20px 0px" },
+          padding: { md: "10px 0px", xs: "20px 0px" },
         }}
       >
         <Box
@@ -263,12 +263,11 @@ const Navbar = () => {
       </Box>
 
       <AppBar
-        position="fixed"
+        position="static"
         elevation={0}
         component="nav"
         sx={{
           background: "transparent",
-          marginTop: { md: "60px", xs: "200px" },
         }}
       >
         <Toolbar sx={{ justifyContent: "space-around" }}>
@@ -278,7 +277,8 @@ const Navbar = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "space-around",
-                  padding: "20px 0px",
+
+                  paddingTop: "10px",
                 }}
               >
                 <Box display="flex" alignItems="center" gap={2}>
