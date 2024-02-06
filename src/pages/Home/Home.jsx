@@ -13,6 +13,7 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import CommonButton from "../../components/CommonButton";
 import AboutUs from "./AboutUs";
 import Services from "./Services";
+import EnjoyTheRide from "./EnjoyTheRide";
 const Home = () => {
   return (
     <>
@@ -132,6 +133,7 @@ const Home = () => {
       </Container>
       <AboutUs />
       <Services />
+      <EnjoyTheRide />
     </>
   );
 };
