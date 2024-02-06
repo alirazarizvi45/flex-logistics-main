@@ -340,10 +340,7 @@ const Navbar = () => {
                           ? "#F2B705"
                           : "#000000",
                       fontFamily: theme.typography.subtitle1.fontFamily,
-                      color:
-                        location.pathname === "/Vehicles"
-                          ? "#F2B705"
-                          : "#000000",
+
                       "&:hover": {
                         color: "#F2B705",
                       },
@@ -356,10 +353,6 @@ const Navbar = () => {
                   <ListItemButton
                     to="/Services"
                     sx={{
-                      color:
-                        location.pathname === "/Services"
-                          ? "#F2B705"
-                          : "#000000",
                       fontFamily: theme.typography.subtitle1.fontFamily,
                       color:
                         location.pathname === "/Services"
@@ -376,10 +369,6 @@ const Navbar = () => {
                   <ListItemButton
                     to="/Booking"
                     sx={{
-                      color:
-                        location.pathname === "/Booking"
-                          ? "#F2B705"
-                          : "#000000",
                       fontFamily: theme.typography.subtitle1.fontFamily,
                       color:
                         location.pathname === "/Booking"
@@ -396,8 +385,6 @@ const Navbar = () => {
                   <ListItemButton
                     to="/FAQ"
                     sx={{
-                      color:
-                        location.pathname === "/FAQ" ? "#F2B705" : "#000000",
                       fontFamily: theme.typography.subtitle1.fontFamily,
                       color:
                         location.pathname === "/FAQ" ? "#F2B705" : "#000000",
@@ -412,8 +399,6 @@ const Navbar = () => {
                   <ListItemButton
                     to="/Dashboard"
                     sx={{
-                      color:
-                        location.pathname === "/Dashboard" ? "#F2B705" : "#fff",
                       fontFamily: theme.typography.subtitle1.fontFamily,
                       color:
                         location.pathname === "/Dashboard"
