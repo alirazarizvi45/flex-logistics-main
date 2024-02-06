@@ -248,10 +248,7 @@ const Navbar = () => {
                   backgroundColor: "#F2B705",
                   color: "#fff",
                   padding: "5px 30px",
-                  "&:hover": {
-                    backgroundColor: "transparent",
-                    border: "1px solid #F2B705",
-                  },
+                  textTransform: "none",
                 }}
               >
                 Login
@@ -264,6 +261,7 @@ const Navbar = () => {
                   color: "#fff",
                   border: "1px solid #F2B705",
                   padding: "5px 20px",
+                  textTransform: "none",
                   "&:hover": {
                     backgroundColor: "#F2B705",
                   },

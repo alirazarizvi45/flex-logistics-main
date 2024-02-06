@@ -12,7 +12,7 @@ const EnjoyTheRide = () => {
           backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
-          minHeight: { md: "70vh", xs: "60vh" },
+          minHeight: "70vh",
           width: "100%",
         }}
       >
@@ -52,7 +52,7 @@ const EnjoyTheRide = () => {
                   backgroundColor: "#F2B705",
                   color: "#fff",
                   padding: "5px 30px",
-                  textTransform: "capitalize",
+                  textTransform: "none",
                   "&:hover": {
                     backgroundColor: "transparent",
                     border: "1px solid #F2B705",
@@ -69,7 +69,7 @@ const EnjoyTheRide = () => {
                   color: "#fff",
                   border: "1px solid #F2B705",
                   padding: "5px 40px",
-                  textTransform: "capitalize",
+                  textTransform: "none",
                   "&:hover": {
                     backgroundColor: "#F2B705",
                   },

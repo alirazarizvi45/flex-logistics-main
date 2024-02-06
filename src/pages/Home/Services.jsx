@@ -28,7 +28,7 @@ const Services = () => {
         "Prioritize safety with vetted drivers and stringent measures, ensuring reliable and secure journeys.",
     },
     {
-      img: pricing,
+      img: focused,
       title: "User-Focused Experience",
       description:
         " Immerse yourself in a personalized travel experience with responsive support and tailored preferences.",

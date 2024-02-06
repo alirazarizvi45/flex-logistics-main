@@ -1,6 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import React from "react";
-
+import theme from "../theme";
 const CommonButton = (props) => {
   const { children, loading, backgroundColor, color, LeftIcon, RightIcon } =
     props;
@@ -18,16 +18,13 @@ const CommonButton = (props) => {
           },
 
           padding: "5px 20px",
-          fontFamily: "Noto Sans",
+          fontFamily: theme.typography.subtitle1.fontFamily,
           backgroundColor: backgroundColor || "#F2B705",
           color: color || "#fff",
 
           "&:hover": {
             backgroundColor: backgroundColor || "transparent",
             color: color || "#fff",
-            "&:hover": {
-              backgroundColor: "#F2B705",
-            },
           },
         }}
         {...props}

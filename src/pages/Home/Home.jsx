@@ -14,6 +14,7 @@ import CommonButton from "../../components/CommonButton";
 import AboutUs from "./AboutUs";
 import Services from "./Services";
 import EnjoyTheRide from "./EnjoyTheRide";
+import HowItWokrs from "./HowItWokrs";
 const Home = () => {
   return (
     <>
@@ -61,7 +62,13 @@ const Home = () => {
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
               <Box>
-                <Typography variant="h4" color="#373A41" pb={2}>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  color="#373A41"
+                  pb={1}
+                >
                   Current Location
                 </Typography>
                 <CustomizeInput
@@ -84,7 +91,13 @@ const Home = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <Box>
-                <Typography variant="h4" color="#373A41" pb={2}>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  color="#373A41"
+                  pb={1}
+                >
                   Destination Location
                 </Typography>
                 <CustomizeInput
@@ -119,9 +132,8 @@ const Home = () => {
               sx={{
                 backgroundColor: "#373A41",
                 color: "#fff",
+                textTransform: "none",
                 "&:hover": {
-                  backgroundColor: "transparent",
-                  border: "1px solid #828282",
                   color: "#000000",
                 },
               }}
@@ -134,6 +146,7 @@ const Home = () => {
       <AboutUs />
       <Services />
       <EnjoyTheRide />
+      <HowItWokrs />
     </>
   );
 };
