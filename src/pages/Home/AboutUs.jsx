@@ -19,7 +19,12 @@ const AboutUs = () => {
               alt="rikshaw"
               style={{ width: "25px", height: "25px", objectFit: "contain" }}
             />
-            <Typography variant="h4" color="#F2B705">
+            <Typography
+              variant="h4"
+              color="#F2B705 "
+              letterSpacing={2}
+              textTransform="uppercase"
+            >
               About Us
             </Typography>
           </Box>
