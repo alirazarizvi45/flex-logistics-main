@@ -137,6 +137,20 @@ const Navbar = () => {
         >
           FAQ
         </ListItemButton>
+        <ListItemButton
+          to="/dashboard"
+          sx={{
+            color: location.pathname === "/Wallet" ? "#F2B705" : "#fff",
+            fontFamily: ["Open Sans Variable", "sans-serif"].join(","),
+            fontSize: "13px",
+            "&:hover": {
+              color: "#F2B705",
+            },
+          }}
+          component={Link}
+        >
+          Dashboard
+        </ListItemButton>
       </Box>
     </Box>
   );
@@ -395,6 +409,24 @@ const Navbar = () => {
                     component={Link}
                   >
                     FAQ
+                  </ListItemButton>
+                  <ListItemButton
+                    to="/dashboard"
+                    sx={{
+                      color:
+                        location.pathname === "/Wallet" ? "#F2B705" : "#fff",
+                      fontFamily: ["Open Sans Variable", "sans-serif"].join(
+                        ","
+                      ),
+                      color: "#000000",
+                      fontSize: "13px",
+                      "&:hover": {
+                        color: "#F2B705",
+                      },
+                    }}
+                    component={Link}
+                  >
+                    Dashboard
                   </ListItemButton>
                 </Box>
 
