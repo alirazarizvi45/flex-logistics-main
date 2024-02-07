@@ -8,7 +8,7 @@ import { VehicleRegistration } from "./VehicleRegistration";
 const Dashboard = () => {
   return (
     <>
-      {/* <IdBack />
+      <IdBack />
       <br />
       <IdFront />
       <br />
@@ -18,7 +18,7 @@ const Dashboard = () => {
       <br />
       <VehiclePicture />
       <br />
-      <VehicleRegistration /> */}
+      <VehicleRegistration />
       <h1>Dashboard</h1>
     </>
   );
