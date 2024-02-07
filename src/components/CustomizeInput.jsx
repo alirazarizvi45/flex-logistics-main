@@ -17,7 +17,7 @@ export const CustomizeInput = styled(TextField)(({ theme }) => ({
     color: "#9FA09C",
     backgroundColor: "#fff",
     "& fieldset": {
-      // borderColor: "#828282",
+      borderColor: "none !important",
     },
     "&:hover fieldset": {
       //  borderColor: "#828282",
@@ -27,7 +27,7 @@ export const CustomizeInput = styled(TextField)(({ theme }) => ({
     },
     "&.Mui-disabled": {
       "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#828282",
+        // borderColor: "#828282",
       },
     },
   },

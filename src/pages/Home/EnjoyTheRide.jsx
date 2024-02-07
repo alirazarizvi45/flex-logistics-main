@@ -53,10 +53,6 @@ const EnjoyTheRide = () => {
                   color: "#fff",
                   padding: "5px 30px",
                   textTransform: "none",
-                  "&:hover": {
-                    backgroundColor: "transparent",
-                    border: "1px solid #F2B705",
-                  },
                 }}
               >
                 Become a Driver

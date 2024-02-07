@@ -15,6 +15,8 @@ import AboutUs from "./AboutUs";
 import Services from "./Services";
 import EnjoyTheRide from "./EnjoyTheRide";
 import HowItWokrs from "./HowItWokrs";
+import Testimonials from "./Testimonials";
+import Faq from "../Dashbord/Faq";
 const Home = () => {
   return (
     <>
@@ -147,6 +149,8 @@ const Home = () => {
       <Services />
       <EnjoyTheRide />
       <HowItWokrs />
+      <Testimonials />
+      <Faq />
     </>
   );
 };
