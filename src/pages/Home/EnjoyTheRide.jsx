@@ -12,7 +12,7 @@ const EnjoyTheRide = () => {
           backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
-          minHeight: "70vh",
+          minHeight: "80vh",
           width: "100%",
         }}
       >

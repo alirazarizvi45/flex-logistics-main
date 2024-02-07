@@ -6,3 +6,24 @@
 body{
   background-color: #F9F9F9;
 }
+
+@keyframes roadAnimation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%); /* Adjust as needed based on your road length */
+  }
+}
+
+.road-animation-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  animation: roadAnimation 10s linear infinite; /* Adjust the duration and timing function as needed */
+}
+
+.car {
+  width: 300px; /* Adjust the width as needed */
+  height: auto;
+}
