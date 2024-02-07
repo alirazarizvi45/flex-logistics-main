@@ -57,7 +57,7 @@ const HowItWokrs = () => {
               variant="h4"
               color="#F2B705"
               textTransform="uppercase"
-              letterSpacing={2}
+              letterSpacing={4}
             >
               HOW IT WORK
             </Typography>
@@ -127,12 +127,12 @@ const HowItWokrs = () => {
                     sx={{
                       position: "absolute",
                       marginTop: { md: "-185px", xs: "0px" },
-                      marginLeft: { lg: "213px", md: "180px", xs: "0px" },
+                      marginLeft: { lg: "215px", md: "180px", xs: "0px" },
                       display: { md: "block", xs: "none" },
                     }}
                   >
                     <Typography color="#373A41">
-                      --------------------------------------------
+                      _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
                     </Typography>
                   </Box>
                 )}
