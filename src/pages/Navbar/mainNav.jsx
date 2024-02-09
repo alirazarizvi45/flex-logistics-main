@@ -1,16 +1,15 @@
-import React from 'react'
-import {Box,ListItemButton,Typography}  from "@mui/material";
+import React from "react";
+import { Box, ListItemButton, Typography } from "@mui/material";
 import theme from "../../theme";
 import CommonButton from "../../components/CommonButton";
 import email from "../../assets/email.png";
-import { Link } from 'react-router-dom';
-const MainNav = ({bgColor}) => {
+import { Link } from "react-router-dom";
+const MainNav = ({ bgColor }) => {
   return (
     <div>
-       
-        <Box
+      <Box
         sx={{
-          backgroundColor: bgColor||"#373A41",
+          backgroundColor: bgColor || "#373A41",
           padding: { md: "10px 0px", xs: "20px 0px" },
         }}
       >
@@ -125,7 +124,7 @@ const MainNav = ({bgColor}) => {
         </Box>
       </Box>
     </div>
-  )
-}
+  );
+};
 
-export default MainNav
+export default MainNav;

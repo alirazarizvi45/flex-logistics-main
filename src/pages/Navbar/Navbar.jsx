@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useLocation } from "react-router-dom";
-
 import facebook from "../../assets/facebook.png";
 import linkedin from "../../assets/linkedin.png";
 import twitter from "../../assets/twitter.png";
@@ -156,8 +155,6 @@ const Navbar = () => {
 
   return (
     <>
-    
-
       <AppBar
         position="static"
         elevation={0}

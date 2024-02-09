@@ -7,7 +7,8 @@ import Home from "./pages/Home/Home";
 import Dashboard from "./pages/Dashbord/Dashboard";
 import Footer from "./pages/Footer/Footer";
 import MainNav from "./pages/Navbar/mainNav";
-import Register from "./pages/auth/Register";
+import LogIn from "./pages/LogIn/LogIn";
+import AuthNavbar from "./pages/Navbar/AuthNavbar";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           path="/"
           element={
             <>
-              <MainNav/>
+              <MainNav />
               <Navbar />
               <Home />
               <Footer />
@@ -34,13 +35,12 @@ function App() {
             </>
           }
         />
-           <Route
-          path="/signup"
+        <Route
+          path="/Login"
           element={
             <>
-              <MainNav bgColor="#F2B705"/>
-              <Register/>
-            
+              <AuthNavbar />
+              <LogIn />
             </>
           }
         />
