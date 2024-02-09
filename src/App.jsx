@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashbord/Dashboard";
 import Footer from "./pages/Footer/Footer";
 import MainNav from "./pages/Navbar/mainNav";
 import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
 
 function App() {
   return (
@@ -40,6 +41,16 @@ function App() {
             <>
               <MainNav bgColor="#F2B705"/>
               <Register/>
+            
+            </>
+          }
+        />
+           <Route
+          path="/login"
+          element={
+            <>
+              <MainNav bgColor="#F2B705"/>
+              <Login/>
             
             </>
           }
