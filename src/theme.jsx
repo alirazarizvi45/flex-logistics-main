@@ -45,13 +45,13 @@ let theme = createTheme({
     h5: {
       fontFamily: ["Noto Sans"].join(","),
       color: "#fff",
-      fontSize: "1 rem",
+      fontSize: "1rem",
       fontWeight: 400,
     },
     h6: {
       fontFamily: ["Inter"].join(","),
       color: "#000000",
-      fontSize: "1 rem",
+      fontSize: "1rem",
       fontWeight: 400,
     },
     subtitle1: {

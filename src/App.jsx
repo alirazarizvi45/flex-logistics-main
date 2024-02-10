@@ -9,6 +9,9 @@ import Footer from "./pages/Footer/Footer";
 import MainNav from "./pages/Navbar/mainNav";
 import LogIn from "./pages/LogIn/LogIn";
 import AuthNavbar from "./pages/Navbar/AuthNavbar";
+import MainSignUp from "./pages/MainSignUp/MainSignUp";
+import DriverSignUpMain from "./pages/DriverSignUp/DriverSignUpMain";
+import RiderSignUpMain from "./pages/RiderSignUp/RiderSignUpMain";
 
 function App() {
   return (
@@ -41,6 +44,34 @@ function App() {
             <>
               <AuthNavbar />
               <LogIn />
+            </>
+          }
+        />
+        <Route
+          path="/SignUp"
+          element={
+            <>
+              <AuthNavbar />
+              <MainSignUp />
+            </>
+          }
+        />
+
+        <Route
+          path="/Driver SignUp"
+          element={
+            <>
+              <AuthNavbar />
+              <DriverSignUpMain />
+            </>
+          }
+        />
+        <Route
+          path="/Rider SignUp"
+          element={
+            <>
+              <AuthNavbar />
+              <RiderSignUpMain />
             </>
           }
         />

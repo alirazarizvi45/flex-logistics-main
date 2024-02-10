@@ -16,7 +16,7 @@ const CommonButton = (props) => {
             md: "14px",
             xs: "10px",
           },
-
+          textTransform: "none",
           padding: "5px 20px",
           fontFamily: theme.typography.subtitle1.fontFamily,
           backgroundColor: backgroundColor || "#F2B705",

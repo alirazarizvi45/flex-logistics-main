@@ -31,9 +31,9 @@ const LogIn = () => {
           backgroundImage: `url(${loginbg})`,
           backgroundPosition: "fixed",
           backgroundRepeat: "no-repeat",
-          backgroundSize: "100% 100%",
+          backgroundSize: { md: "100% 100%", xs: "100% 50%" },
           backgroundColor: "#373A41",
-          minHeight: { md: "100vh", xs: "80vh" },
+          minHeight: "100vh",
           width: "100%",
         }}
       >
@@ -61,6 +61,9 @@ const LogIn = () => {
                   }}
                 />
               </Box>
+              <Typography variant="subtitle2" fontWeight="bold" pt={5}>
+                Please select your role
+              </Typography>
               <Box
                 sx={{
                   pt: "20px",
@@ -222,11 +225,11 @@ const LogIn = () => {
                 <CommonButton
                   startIcon={
                     <Box
-                      mr={6}
                       sx={{
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
+                        marginRight: { md: "20px", xs: "5px" },
                       }}
                     >
                       <img
@@ -258,8 +261,9 @@ const LogIn = () => {
               <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { sm: "row", xs: "column" },
                   marginTop: "20px",
-                  gap: "5px",
+                  gap: "8px",
                 }}
               >
                 <Typography variant="subtitle2">

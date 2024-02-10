@@ -17,10 +17,12 @@
     "@fontsource/kanit": "^5.0.18",
     "@fontsource/noto-sans": "^5.0.18",
     "@mui/icons-material": "^5.15.6",
-    "@mui/lab": "^5.0.0-alpha.162",
+    "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.6",
     "@mui/x-data-grid": "^6.19.2",
+   
     "add": "^2.0.6",
+    "mui-tel-input": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
