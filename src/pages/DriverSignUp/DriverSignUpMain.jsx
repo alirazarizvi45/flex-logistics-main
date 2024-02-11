@@ -11,6 +11,12 @@ import DriverSignUpOne from "./DriverSignUpOne";
 import DriverSignUpFour from "./DriverSignUpFour";
 import DriverSignupFive from "./DriverSignupFive";
 import PersonalInfo from "./PersonalInfo";
+import LicenseUpload from "./LicenseUpload";
+import ProfilePic from "./ProfilePic";
+import IDFront from "./IDFront";
+import IDBack from "./IDBack";
+import VehicleRegistration from "./VehicleRegistration";
+import VehiclePicture from "./VehiclePicture";
 const DriverSignUpMain = () => {
   const [activeStep, setActiveStep] = useState(0);
 
@@ -21,6 +27,12 @@ const DriverSignUpMain = () => {
     <DriverSignUpFour />,
     <DriverSignupFive />,
     <PersonalInfo />,
+    <LicenseUpload />,
+    <ProfilePic />,
+    <IDFront />,
+    <IDBack />,
+    <VehicleRegistration />,
+    <VehiclePicture />,
   ];
 
   const handleNext = () => {
