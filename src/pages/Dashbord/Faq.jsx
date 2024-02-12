@@ -136,14 +136,16 @@ const Faq = () => {
         minHeight: "auto",
       }}
     >
-      <Container maxWidth="lg" sx={{ padding: "70px 0px" }}>
+      <Container maxWidth="lg">
         <Grid
           container
           spacing={2}
           sx={{
             display: "flex",
+
             justifyContent: "center",
             alignItems: "center",
+            padding: "70px 0px",
           }}
         >
           <Grid item md={6} xs={12}>
@@ -239,6 +241,7 @@ const Faq = () => {
               </Box>
             ))}
           </Grid>
+
           <Grid item md={6} xs={12}>
             <Box
               sx={{
