@@ -16,7 +16,8 @@ import Services from "./Services";
 import EnjoyTheRide from "./EnjoyTheRide";
 import HowItWokrs from "./HowItWokrs";
 import Testimonials from "./Testimonials";
-import Faq from "../Dashbord/Faq";
+import Faq from "./Faq";
+
 const Home = () => {
   return (
     <>

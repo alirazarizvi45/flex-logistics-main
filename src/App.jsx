@@ -4,7 +4,7 @@ import "./App.css";
 import Navbar from "./pages/Navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import Dashboard from "./pages/Dashbord/Dashboard";
+
 import Footer from "./pages/Footer/Footer";
 import MainNav from "./pages/Navbar/mainNav";
 import LogIn from "./pages/LogIn/LogIn";
@@ -12,6 +12,7 @@ import AuthNavbar from "./pages/Navbar/AuthNavbar";
 import MainSignUp from "./pages/MainSignUp/MainSignUp";
 import DriverSignUpMain from "./pages/DriverSignUp/DriverSignUpMain";
 import RiderSignUpMain from "./pages/RiderSignUp/RiderSignUpMain";
+import Dashboard from "./pages/DriverNavbarAndDashbord/Dashboard";
 
 function App() {
   return (
@@ -29,12 +30,10 @@ function App() {
           }
         />
         <Route
-          path="/dashboard"
+          path="/Dashboard/*"
           element={
             <>
-              <Navbar />
               <Dashboard />
-              <Footer />
             </>
           }
         />
