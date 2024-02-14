@@ -16,7 +16,7 @@ import Services from "./Services";
 import EnjoyTheRide from "./EnjoyTheRide";
 import HowItWokrs from "./HowItWokrs";
 import Testimonials from "./Testimonials";
-import Faq from "../Dashbord/Faq";
+
 const Home = () => {
   return (
     <>
@@ -150,7 +150,7 @@ const Home = () => {
       <EnjoyTheRide />
       <HowItWokrs />
       <Testimonials />
-      <Faq />
+      {/* <Faq/> */}
     </>
   );
 };
