@@ -24,8 +24,9 @@ import message from "../../assets/message.png";
 import profile from "../../assets/profile.png";
 import support from "../../assets/support.png";
 import logout from "../../assets/logout.png";
+import bell from "../../assets/bell.png";
+import user from "../../assets/user.png";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
-import Home from "./Home";
 import MyRides from "./MyRides";
 import VehicleDetails from "./VehicleDetails";
 import Earning from "./Earning";
@@ -33,8 +34,27 @@ import Messages from "./Messages";
 import Profile from "./Profile";
 import Support from "./Support";
 import Logout from "./Logout";
+import { MenuItem, Select } from "@mui/material";
+import DriverDashboardHome from "./DriverDashboardHome";
 const drawerWidth = 240;
+const PlainSelect = styled(Select)({
+  backgroundColor: "transparent",
 
+  border: "none", // Removing border
+  outline: "none",
+  "&:hover": {
+    backgroundColor: "transparent",
+  },
+  "&:focus": {
+    backgroundColor: "transparent",
+  },
+  "&.MuiOutlinedInput-root": {
+    // Removing outline styles for outlined variant
+    "& fieldset": {
+      border: "none",
+    },
+  },
+});
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -105,7 +125,11 @@ export default function DriverNavbarAndDashBoard() {
   const theme = useTheme();
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
+  const [selectedOption, setSelectedOption] = React.useState("");
 
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -121,7 +145,7 @@ export default function DriverNavbarAndDashBoard() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} sx={{ background: "#fff" }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -135,15 +159,69 @@ export default function DriverNavbarAndDashBoard() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { md: "row", xs: "column" },
+              justifyContent: "space-between",
+              alignItems: "center",
+
+              width: "100%",
+            }}
+          >
+            <Typography variant="h5" color="#000">
+              Partnership with{" "}
+              <span style={{ color: "#F2B705" }}> Flex Logistics </span>
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: { md: "20px", xs: "7px" },
+              }}
+            >
+              <img
+                src={bell}
+                alt="bell"
+                style={{ width: "25px", height: "20px", objectFit: "contain" }}
+              />
+              <img
+                src={message}
+                alt="message"
+                style={{ width: "25px", height: "20px", objectFit: "contain" }}
+              />
+              <img
+                src={user}
+                alt="user"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "contain",
+                }}
+              />
+              <PlainSelect value={selectedOption} onChange={handleChange}>
+                <MenuItem value={"username"} sx={{ color: "#000000" }}>
+                  Nyambura Wanjiru
+                </MenuItem>
+                <MenuItem value={"viewprofile"} sx={{ color: "#000000" }}>
+                  View Profile
+                </MenuItem>
+                <MenuItem value={"logout"} sx={{ color: "#000000" }}>
+                  Logout
+                </MenuItem>
+              </PlainSelect>
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer
         variant="permanent"
         open={open}
-        sx={{ "& .MuiDrawer-paper": { backgroundColor: "#373A41" } }}
+        sx={{
+          "& .MuiDrawer-paper": { backgroundColor: "#373A41" },
+        }}
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose} sx={{ color: "#fff" }}>
@@ -465,14 +543,11 @@ export default function DriverNavbarAndDashBoard() {
           </ListItem>
         </List>
       </Drawer>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#F9F9F9" }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 2, background: "#F9F9F9" }}>
         <DrawerHeader />
 
         <Routes>
-          <Route path="/Home" element={<Home />} />
+          <Route path="/Home" element={<DriverDashboardHome />} />
           <Route path="/My Rides" element={<MyRides />} />
           <Route path="/Vehicle Details" element={<VehicleDetails />} />
           <Route path="/Earning" element={<Earning />} />
