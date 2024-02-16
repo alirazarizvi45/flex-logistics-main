@@ -9,7 +9,7 @@ const VehicleDetails = () => {
       <Container maxWidth="xl">
         <Box sx={{ width: "1040px" }}>
           <Stack direction="row" justifyContent="space-between" mt={4}>
-            <Typography variant="h3">Vehicles</Typography>
+            <Typography variant="h3" sx={{color:'#373A41'}}>Vehicles</Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
               <Button variant="contained" href="#contained-buttons">
                 Register new Vehicle
@@ -28,39 +28,41 @@ const VehicleDetails = () => {
                 display: "flex",
                 justifyItems: "center",
                 padding: "10px",
+                mt:'30px',
+                borderRadius:'10px'
               }}
             >
-              <Grid item lg={12} md={6} sm={12} xs={12} mt={2}>
+              <Grid item lg={6} md={6} sm={6} xs={12} mt={1}>
                 <img src={blackcar} alt="blackcar" />
               </Grid>
-              <Grid item lg={12} md={12} sm={12} xs={12}>
-                <Typography variant="h4">vehicle detail:</Typography>
+              <Grid item lg={6} md={6} sm={6} xs={12}>
+                <Typography variant="h3" sx={{color:'#000'}}>vehicle detail:</Typography>
                 <Box sx={{ display: "flex", gap: 10, mt: "30px" }}>
                   <Box>
-                    <Typography>Name</Typography>
-                    <Typography>Mercedes</Typography>
+                    <Typography sx={{color:'#000'}}>Name</Typography>
+                    <Typography sx={{color:'#000'}}>Mercedes</Typography>
                   </Box>
                   <Box>
-                    <Typography>Number</Typography>
-                    <Typography>kdk 1024</Typography>
+                    <Typography sx={{color:'#000'}}>Number</Typography>
+                    <Typography sx={{color:'#000'}}>kdk 1024</Typography>
                   </Box>
                   <Box>
-                    <Typography>Model</Typography>
-                    <Typography>EleganceXpress</Typography>
+                    <Typography sx={{color:'#000'}}>Model</Typography>
+                    <Typography sx={{color:'#000'}}>EleganceXpress</Typography>
                   </Box>
                 </Box>
                 <Box sx={{ display: "flex", gap: 10, mt: "37px" }}>
                   <Box>
-                    <Typography>Name</Typography>
-                    <Typography>Mercedes</Typography>
+                    <Typography sx={{color:'#000'}}>Name</Typography>
+                    <Typography sx={{color:'#000'}}>Mercedes</Typography>
                   </Box>
                   <Box>
-                    <Typography>Number</Typography>
-                    <Typography>kdk 1024</Typography>
+                    <Typography sx={{color:'#000'}}>Number</Typography>
+                    <Typography sx={{color:'#000'}}>kdk 1024</Typography>
                   </Box>
                   <Box>
-                    <Typography>Model</Typography>
-                    <Typography>EleganceXpress</Typography>
+                    <Typography sx={{color:'#000'}}>Model</Typography>
+                    <Typography sx={{color:'#000'}}>EleganceXpress</Typography>
                   </Box>
                 </Box>
               </Grid>
