@@ -19,7 +19,7 @@ const DriverDashboardHome = () => {
           minHeight: "100vh",
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Box>
             <Typography variant="h3" sx={{ color: "#000" }} pb={2}>
               Current Ride
