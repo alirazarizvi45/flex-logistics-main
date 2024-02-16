@@ -12,7 +12,7 @@ import AuthNavbar from "./pages/Navbar/AuthNavbar";
 import MainSignUp from "./pages/MainSignUp/MainSignUp";
 import DriverSignUpMain from "./pages/DriverSignUp/DriverSignUpMain";
 import RiderSignUpMain from "./pages/RiderSignUp/RiderSignUpMain";
-import Dashboard from "./pages/DriverNavbarAndDashbord/Dashboard";
+import DriverNavbarAndDashBoard from "./pages/DriverNavbarAndDashbord/DriverNavbarAndDashBoard";
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
           path="/Dashboard/*"
           element={
             <>
-              <Dashboard />
+              <DriverNavbarAndDashBoard />
             </>
           }
         />
