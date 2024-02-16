@@ -108,7 +108,7 @@ const Navbar = () => {
           Services
         </ListItemButton>
         <ListItemButton
-          to="/Dashboard"
+          to="/"
           sx={{
             color: location.pathname === "/Dashboard" ? "#F2B705" : "#fff",
             fontFamily: theme.typography.subtitle1.fontFamily,
@@ -135,7 +135,7 @@ const Navbar = () => {
         >
           FAQ
         </ListItemButton>
-        <ListItemButton
+        {/* <ListItemButton
           to="/dashboard"
           sx={{
             color: location.pathname === "/Wallet" ? "#F2B705" : "#fff",
@@ -148,7 +148,7 @@ const Navbar = () => {
           component={Link}
         >
           Dashboard
-        </ListItemButton>
+        </ListItemButton> */}
       </Box>
     </Box>
   );
@@ -277,7 +277,7 @@ const Navbar = () => {
                   >
                     FAQ
                   </ListItemButton>
-                  <ListItemButton
+                  {/* <ListItemButton
                     to="/Dashboard"
                     sx={{
                       fontFamily: theme.typography.subtitle1.fontFamily,
@@ -292,7 +292,7 @@ const Navbar = () => {
                     component={Link}
                   >
                     Dashboard
-                  </ListItemButton>
+                  </ListItemButton> */}
                 </Box>
 
                 <Box
