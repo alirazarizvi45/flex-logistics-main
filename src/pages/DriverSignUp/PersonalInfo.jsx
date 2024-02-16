@@ -5,12 +5,13 @@ import {
   InputAdornment,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+
 import { CustomizeInput } from "../../components/CustomizeInput";
 import moment from "moment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CommonButton from "../../components/CommonButton";
+import { useState } from "react";
 const PersonalInfo = () => {
   const [dob, setDob] = useState("");
 
