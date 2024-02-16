@@ -5,7 +5,6 @@ import {
   Button,
   Container,
   Hidden,
-  ListItemButton,
   Paper,
   Stack,
   SwipeableDrawer,
@@ -14,12 +13,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import facebook from "../../assets/facebook.png";
 import linkedin from "../../assets/linkedin.png";
 import twitter from "../../assets/twitter.png";
 import instagram from "../../assets/instagram.png";
 import theme from "../../theme";
+import { Link } from "react-scroll";
 const Navbar = () => {
   useMediaQuery("(max-width:1200px)");
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -34,7 +34,42 @@ const Navbar = () => {
     }
     setOpenDrawer(open);
   };
+  const [activeLinks, setActiveLinks] = useState({
+    home: false,
+    "about-us": false,
+    "enjoy-the-ride": false,
+    services: false,
+    "how-it-work": false,
+    faq: false,
+  });
+  const handleLinkClick = (linkId) => {
+    // Clear active state for all links
+    const updatedActiveLinks = Object.fromEntries(
+      Object.entries(activeLinks).map(([key, value]) => [key, false])
+    );
+    // Set active state for the clicked link
+    updatedActiveLinks[linkId] = true;
+    setActiveLinks(updatedActiveLinks);
+  };
 
+  const getLinkStyles = (linkId) => ({
+    borderBottom: activeLinks[linkId] ? "2px solid #F2B705" : "",
+    fontFamily: theme.typography.subtitle1.fontFamily,
+    color: activeLinks[linkId] ? "#F2B705" : "#000000",
+    "&:hover": {
+      color: "#F2B705",
+    },
+    cursor: "pointer",
+  });
+  const getLinkStylesDrawer = (linkId) => ({
+    borderBottom: activeLinks[linkId] ? "2px solid #F2B705" : "",
+    fontFamily: theme.typography.subtitle1.fontFamily,
+    color: activeLinks[linkId] ? "#F2B705" : "#fff",
+    "&:hover": {
+      color: "#F2B705",
+    },
+    cursor: "pointer",
+  });
   const list = () => (
     <Box
       role="presentation"
@@ -49,106 +84,80 @@ const Navbar = () => {
         alignItems="center"
         gap={2}
       >
-        <ListItemButton
-          to="/"
-          sx={{
-            color: location.pathname === "/" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+        <Link
+          activeClass="active"
+          to="home"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("home")}
         >
-          Home
-        </ListItemButton>
+          <Typography sx={getLinkStylesDrawer("home")}>Home</Typography>
+        </Link>
 
-        <ListItemButton
-          to="/SellCrypto"
-          sx={{
-            color: location.pathname === "/SellCrypto" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+        <Link
+          activeClass="active"
+          to="about-us"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("about-us")}
         >
-          About us
-        </ListItemButton>
-        <ListItemButton
-          to="/Swap"
-          sx={{
-            color: location.pathname === "/Swap" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "15px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
-        >
-          Vehicles
-        </ListItemButton>
+          <Typography sx={getLinkStylesDrawer("about-us")}>About us</Typography>
+        </Link>
 
-        <ListItemButton
-          to="/CreateOffer"
-          sx={{
-            color: location.pathname === "/CreateOffer" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+        <Link
+          activeClass="active"
+          to="enjoy-the-ride"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("enjoy-the-ride")}
         >
-          Services
-        </ListItemButton>
-        <ListItemButton
-          to="/"
-          sx={{
-            color: location.pathname === "/Dashboard" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+          {" "}
+          <Typography sx={getLinkStylesDrawer("enjoy-the-ride")}>
+            Vehicles
+          </Typography>
+        </Link>
+
+        <Link
+          activeClass="active"
+          to="services"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("services")}
         >
-          Booking
-        </ListItemButton>
-        <ListItemButton
-          to="/Wallet"
-          sx={{
-            color: location.pathname === "/Wallet" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+          <Typography sx={getLinkStylesDrawer("services")}>Services</Typography>
+        </Link>
+        <Link
+          activeClass="active"
+          to="how-it-work"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("how-it-work")}
         >
-          FAQ
-        </ListItemButton>
-        {/* <ListItemButton
-          to="/dashboard"
-          sx={{
-            color: location.pathname === "/Wallet" ? "#F2B705" : "#fff",
-            fontFamily: theme.typography.subtitle1.fontFamily,
-            fontSize: "13px",
-            "&:hover": {
-              color: "#F2B705",
-            },
-          }}
-          component={Link}
+          <Typography sx={getLinkStylesDrawer("how-it-work")}>
+            Booking
+          </Typography>
+        </Link>
+        <Link
+          activeClass="active"
+          to="faq"
+          spy={true}
+          smooth={true}
+          duration={500}
+          offset={-70}
+          onClick={() => handleLinkClick("faq")}
         >
-          Dashboard
-        </ListItemButton> */}
+          <Typography sx={getLinkStylesDrawer("faq")}>FAQ</Typography>
+        </Link>
       </Box>
     </Box>
   );
@@ -174,110 +183,86 @@ const Navbar = () => {
                   paddingTop: "10px",
                 }}
               >
-                <Box display="flex" alignItems="center">
-                  <ListItemButton
-                    to="/"
-                    sx={{
-                      borderBottom:
-                        location.pathname === "/" ? "2px solid #F2B705" : "",
-                      color: location.pathname === "/" ? "#F2B705" : "#000000",
-                      fontFamily: theme.typography.subtitle1.fontFamily,
+                <Box display="flex" alignItems="center" gap="20px">
+                  <Link
+                    activeClass="active"
+                    to="home"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("home")}
+                  >
+                    <Typography sx={getLinkStyles("home")}>Home</Typography>
+                  </Link>
 
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
+                  <Link
+                    activeClass="active"
+                    to="about-us"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("about-us")}
                   >
-                    Home
-                  </ListItemButton>
+                    <Typography sx={getLinkStyles("about-us")}>
+                      About us
+                    </Typography>
+                  </Link>
 
-                  <ListItemButton
-                    to="/Aboutus"
-                    sx={{
-                      borderBottom:
-                        location.pathname === "/Aboutus"
-                          ? "2px solid #F2B705"
-                          : "",
-                      fontFamily: theme.typography.subtitle1.fontFamily,
-                      color:
-                        location.pathname === "/Aboutus"
-                          ? "#F2B705"
-                          : "#000000",
+                  <Link
+                    activeClass="active"
+                    to="enjoy-the-ride"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("enjoy-the-ride")}
+                  >
+                    {" "}
+                    <Typography sx={getLinkStyles("enjoy-the-ride")}>
+                      Vehicles
+                    </Typography>
+                  </Link>
 
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
+                  <Link
+                    activeClass="active"
+                    to="services"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("services")}
                   >
-                    About us
-                  </ListItemButton>
-                  <ListItemButton
-                    to="/Vehicles"
-                    sx={{
-                      color:
-                        location.pathname === "/Vehicles"
-                          ? "#F2B705"
-                          : "#000000",
-                      fontFamily: theme.typography.subtitle1.fontFamily,
-
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
+                    <Typography sx={getLinkStyles("services")}>
+                      Services
+                    </Typography>
+                  </Link>
+                  <Link
+                    activeClass="active"
+                    to="how-it-work"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("how-it-work")}
                   >
-                    Vehicles
-                  </ListItemButton>
-
-                  <ListItemButton
-                    to="/Services"
-                    sx={{
-                      fontFamily: theme.typography.subtitle1.fontFamily,
-                      color:
-                        location.pathname === "/Services"
-                          ? "#F2B705"
-                          : "#000000",
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
+                    <Typography sx={getLinkStyles("how-it-work")}>
+                      Booking
+                    </Typography>
+                  </Link>
+                  <Link
+                    activeClass="active"
+                    to="faq"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("faq")}
                   >
-                    Services
-                  </ListItemButton>
-                  <ListItemButton
-                    to="/Booking"
-                    sx={{
-                      fontFamily: theme.typography.subtitle1.fontFamily,
-                      color:
-                        location.pathname === "/Booking"
-                          ? "#F2B705"
-                          : "#000000",
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
-                  >
-                    Booking
-                  </ListItemButton>
-                  <ListItemButton
-                    to="/FAQ"
-                    sx={{
-                      fontFamily: theme.typography.subtitle1.fontFamily,
-                      color:
-                        location.pathname === "/FAQ" ? "#F2B705" : "#000000",
-                      "&:hover": {
-                        color: "#F2B705",
-                      },
-                    }}
-                    component={Link}
-                  >
-                    FAQ
-                  </ListItemButton>
-                  {/* <ListItemButton
+                    <Typography sx={getLinkStyles("faq")}>FAQ</Typography>
+                  </Link>
+                  {/* <Link
                     to="/Dashboard"
                     sx={{
                       fontFamily: theme.typography.subtitle1.fontFamily,
@@ -289,10 +274,10 @@ const Navbar = () => {
                         color: "#F2B705",
                       },
                     }}
-                    component={Link}
+                   
                   >
                     Dashboard
-                  </ListItemButton> */}
+                  </Link> */}
                 </Box>
 
                 <Box
@@ -372,18 +357,17 @@ const Navbar = () => {
                 justifyContent="space-between"
                 width="100%"
               >
-                <ListItemButton
+                <Link
                   to="/"
                   sx={{
                     color: location.pathname === "/" ? "#F2B705" : "#000000",
                     fontFamily: theme.typography.subtitle1.fontFamily,
                   }}
-                  component={Link}
                 >
                   <Typography variant="h3" color="#F2B705">
                     Logo
                   </Typography>
-                </ListItemButton>
+                </Link>
                 <Button onClick={toggleDrawer(true)}>
                   <MenuIcon
                     style={{
