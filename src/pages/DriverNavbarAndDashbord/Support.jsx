@@ -38,12 +38,14 @@ const Support = () => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1-content"
           id="panel1-header"
+          
+          sx={{color:'#373A41', fontWeight:'800'}}
         >
-          Accordion 1
+          What is the Flex Logistic Driver Dashboard?
         </AccordionSummary>
-        <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
+        <AccordionDetails sx={{color:"#373A41"}}>
+        The flex logistic Driver Dashboard is a centralized online platform that allows flex logistic  drivers to manage their account, track earnings, 
+        and access important information related to their trips and performance.
         </AccordionDetails>
       </Accordion>
      
@@ -52,10 +54,11 @@ const Support = () => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2-content"
           id="panel2-header"
+          sx={{color:'#373A41', fontWeight:'800'}}
         >
-          Accordion 2
+        How can I track my earnings on the Flex Logistic Driver Dashboard?
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{color:"#373A41"}}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
           malesuada lacus ex, sit amet blandit leo lobortis eget.
         </AccordionDetails>
@@ -65,10 +68,13 @@ const Support = () => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2-content"
           id="panel2-header"
+          sx={{color:'#373A41', fontWeight:'800'}}
         >
-          Accordion 3
+          Can I manage my profile through the  Flex Logistic Driver Dashboard?
+
+
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{color:"#373A41"}}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
           malesuada lacus ex, sit amet blandit leo lobortis eget.
         </AccordionDetails>
@@ -78,27 +84,16 @@ const Support = () => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2-content"
           id="panel2-header"
+          sx={{color:'#373A41', fontWeight:'800'}}
         >
-          Accordion 4
+           How do I navigate to a specific feature on the Dashboard?
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{color:"#373A41"}}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
           malesuada lacus ex, sit amet blandit leo lobortis eget.
         </AccordionDetails>
       </Accordion>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2-content"
-          id="panel2-header"
-        >
-          Accordion 5
-        </AccordionSummary>
-        <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
-        </AccordionDetails>
-      </Accordion>
+      
     </Box>
 
     </Container>
