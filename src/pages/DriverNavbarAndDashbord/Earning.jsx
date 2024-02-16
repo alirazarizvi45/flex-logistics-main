@@ -61,7 +61,7 @@ const ReChart = () => {
 const Earning = () => {
   return (
     <>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box>
           <Stack
             direction={{ md: "row", xs: "column" }}
@@ -216,10 +216,10 @@ const Earning = () => {
                   }}
                 >
                   <Typography variant="h4" color="#000">
-                    1844
+                    2457
                   </Typography>
                   <Typography variant="subtitle1" color="#000">
-                    Total Rides
+                    Total Passengers
                   </Typography>
                 </Box>
                 <Divider
@@ -251,10 +251,10 @@ const Earning = () => {
                   }}
                 >
                   <Typography variant="h4" color="#000">
-                    1844
+                    14
                   </Typography>
                   <Typography variant="subtitle1" color="#000">
-                    Total Rides
+                    Today Rides
                   </Typography>
                 </Box>
                 <Divider
@@ -285,10 +285,10 @@ const Earning = () => {
                   }}
                 >
                   <Typography variant="h4" color="#000">
-                    1844
+                    1000+
                   </Typography>
                   <Typography variant="subtitle1" color="#000">
-                    Total Rides
+                    Positive Reviews
                   </Typography>
                 </Box>
                 <Divider
