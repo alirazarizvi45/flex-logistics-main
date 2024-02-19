@@ -14,6 +14,7 @@ import CommonButton from "../../components/CommonButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { CustomizeInput } from "../../components/CustomizeInput";
+import { Element } from "react-scroll";
 const Faq = () => {
   const [expanded1, setExpanded1] = useState(false);
   const [expanded2, setExpanded2] = useState(false);
@@ -127,186 +128,188 @@ const Faq = () => {
     },
   ];
   return (
-    <Box
-      sx={{
-        backgroundImage: `url(${map})`,
-        backgroundPosition: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        minHeight: "auto",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            display: "flex",
+    <Element name="faq" className="element">
+      <Box
+        sx={{
+          backgroundImage: `url(${map})`,
+          backgroundPosition: "100% 100%",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          minHeight: "auto",
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              display: "flex",
 
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "70px 0px",
-          }}
-        >
-          <Grid item md={6} xs={12}>
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-              }}
-            >
-              <img
-                src={mingcuteCar}
-                alt="solarbus"
-                style={{
-                  width: "25px",
-                  height: "25px",
-                  objectFit: "contain",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "70px 0px",
+            }}
+          >
+            <Grid item md={6} xs={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "10px",
                 }}
-              />
-              <Typography
-                variant="h4"
-                color="#F2B705"
-                textTransform="uppercase"
-                letterSpacing={4}
               >
-                FAQ’s
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="h2"
-                color="#373A41"
-                fontWeight="bolder"
-                pt={2}
-              >
-                Explore Your Queries
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                fontSize="17px"
-                color="#5A5A5A"
-                pt={1}
-              >
-                Frequently Asked Questions about Flex Logistics
-              </Typography>
-            </Box>
+                <img
+                  src={mingcuteCar}
+                  alt="solarbus"
+                  style={{
+                    width: "25px",
+                    height: "25px",
+                    objectFit: "contain",
+                  }}
+                />
+                <Typography
+                  variant="h4"
+                  color="#F2B705"
+                  textTransform="uppercase"
+                  letterSpacing={4}
+                >
+                  FAQ’s
+                </Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h2"
+                  color="#373A41"
+                  fontWeight="bolder"
+                  pt={2}
+                >
+                  Explore Your Queries
+                </Typography>
+                <Typography
+                  variant="subtitle2"
+                  fontSize="17px"
+                  color="#5A5A5A"
+                  pt={1}
+                >
+                  Frequently Asked Questions about Flex Logistics
+                </Typography>
+              </Box>
 
-            {faqData.map((faq, index) => (
-              <Box key={index} mt={2}>
+              {faqData.map((faq, index) => (
+                <Box key={index} mt={2}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CommonButton
+                      onClick={() => handleToggle(index + 1)}
+                      sx={{
+                        backgroundColor: getButtonColor(index + 1),
+                        color: "#fff",
+                        padding: "10px",
+                        "&:hover": {
+                          backgroundColor: getButtonColor(index + 1),
+                        },
+                      }}
+                    >
+                      {getButtonIcon(index + 1)}
+                    </CommonButton>
+
+                    <Typography
+                      sx={{
+                        backgroundColor: "#E6E6E6",
+                        padding: "10px",
+                        fontWeight: "600",
+                        flexGrow: 1,
+                      }}
+                      color="#464343"
+                      variant="subtitle1"
+                    >
+                      {faq.question}
+                    </Typography>
+                  </Box>
+
+                  <Collapse
+                    in={getExpandedState(index + 1)}
+                    timeout="auto"
+                    unmountOnExit
+                    sx={{ marginTop: "10px" }}
+                  >
+                    <Typography color="#000000" sx={{ padding: "10px" }}>
+                      {faq.answer}
+                    </Typography>
+                  </Collapse>
+                </Box>
+              ))}
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <Box
+                sx={{
+                  backgroundColor: "#F2B705",
+                  padding: "20px 30px",
+                  borderRadius: "5px",
+                }}
+              >
                 <Box
                   sx={{
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
+                    justifyContent: "center",
+                    gap: "5px",
                   }}
                 >
-                  <CommonButton
-                    onClick={() => handleToggle(index + 1)}
-                    sx={{
-                      backgroundColor: getButtonColor(index + 1),
-                      color: "#fff",
-                      padding: "10px",
-                      "&:hover": {
-                        backgroundColor: getButtonColor(index + 1),
-                      },
-                    }}
-                  >
-                    {getButtonIcon(index + 1)}
-                  </CommonButton>
-
-                  <Typography
-                    sx={{
-                      backgroundColor: "#E6E6E6",
-                      padding: "10px",
-                      fontWeight: "600",
-                      flexGrow: 1,
-                    }}
-                    color="#464343"
-                    variant="subtitle1"
-                  >
-                    {faq.question}
+                  <Typography variant="h3" color="#373A41">
+                    Get in Touch
                   </Typography>
+                  <Divider
+                    sx={{
+                      borderBottom: "3px solid #373A41",
+                      width: "12%",
+                    }}
+                  />
                 </Box>
-
-                <Collapse
-                  in={getExpandedState(index + 1)}
-                  timeout="auto"
-                  unmountOnExit
-                  sx={{ marginTop: "10px" }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    paddingTop: "20px",
+                  }}
                 >
-                  <Typography color="#000000" sx={{ padding: "10px" }}>
-                    {faq.answer}
-                  </Typography>
-                </Collapse>
+                  <CustomizeInput fullWidth placeholder="Full name" />
+                  <CustomizeInput fullWidth placeholder="Email Address" />
+                  <TextField
+                    multiline
+                    rows={4}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Message"
+                    sx={{
+                      backgroundColor: "#fff",
+                    }}
+                  />
+                </Box>
+                <Box pt={2}>
+                  <CommonButton
+                    sx={{
+                      backgroundColor: "#373A41",
+                      color: "#fff",
+                      textTransform: "none",
+                    }}
+                    fullWidth
+                  >
+                    Send Now
+                  </CommonButton>
+                </Box>
               </Box>
-            ))}
+            </Grid>
           </Grid>
-
-          <Grid item md={6} xs={12}>
-            <Box
-              sx={{
-                backgroundColor: "#F2B705",
-                padding: "20px 30px",
-                borderRadius: "5px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "5px",
-                }}
-              >
-                <Typography variant="h3" color="#373A41">
-                  Get in Touch
-                </Typography>
-                <Divider
-                  sx={{
-                    borderBottom: "3px solid #373A41",
-                    width: "12%",
-                  }}
-                />
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                  paddingTop: "20px",
-                }}
-              >
-                <CustomizeInput fullWidth placeholder="Full name" />
-                <CustomizeInput fullWidth placeholder="Email Address" />
-                <TextField
-                  multiline
-                  rows={4}
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Message"
-                  sx={{
-                    backgroundColor: "#fff",
-                  }}
-                />
-              </Box>
-              <Box pt={2}>
-                <CommonButton
-                  sx={{
-                    backgroundColor: "#373A41",
-                    color: "#fff",
-                    textTransform: "none",
-                  }}
-                  fullWidth
-                >
-                  Send Now
-                </CommonButton>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </Element>
   );
 };
 export default Faq;

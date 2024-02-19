@@ -543,7 +543,10 @@ export default function DriverNavbarAndDashBoard() {
           </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 2, background: "#F9F9F9" }}>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 2, background: "#F9F9F9", minHeight: "100vh" }}
+      >
         <DrawerHeader />
 
         <Routes>
