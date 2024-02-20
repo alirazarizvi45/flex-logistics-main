@@ -189,6 +189,7 @@ const BookRide = () => {
                     variant="subtitle2"
                     fontWeight="bold"
                     color="#373A41"
+                    lineHeight="30px"
                   >
                     Pickup Location
                   </Typography>
@@ -344,6 +345,7 @@ const BookRide = () => {
                     color: "#373A41",
                     fontWeight: "bold",
                     fontFamily: theme.typography.subtitle1.fontFamily,
+                    lineHeight: "30px",
                   }}
                 >
                   Payment Method

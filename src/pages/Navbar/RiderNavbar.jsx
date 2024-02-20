@@ -25,6 +25,8 @@ import { Link, Route, Routes, useLocation } from "react-router-dom";
 import BookRide from "../RiderComps/BookRide/BookRide";
 import MyRides from "../RiderComps/MyRidesComp/MyRides";
 import theme from "../../theme";
+import AvailableRides from "../RiderComps/BookRide/AvailableRides";
+import RideDetail from "../RiderComps/BookRide/RideDetail";
 
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
@@ -187,6 +189,11 @@ const RiderNavbar = () => {
               element={
                 <>
                   <BookRide />
+                  <br />
+                  <AvailableRides />
+                  <br />
+                  <RideDetail />
+                  <br />
                 </>
               }
             />
