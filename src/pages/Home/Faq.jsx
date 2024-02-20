@@ -136,6 +136,7 @@ const Faq = () => {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           minHeight: "auto",
+          paddingTop: "20px",
         }}
       >
         <Container maxWidth="lg">

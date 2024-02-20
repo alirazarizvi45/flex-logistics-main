@@ -13,6 +13,8 @@ import MainSignUp from "./pages/MainSignUp/MainSignUp";
 import DriverSignUpMain from "./pages/DriverSignUp/DriverSignUpMain";
 import RiderSignUpMain from "./pages/RiderSignUp/RiderSignUpMain";
 import DriverNavbarAndDashBoard from "./pages/DriverNavbarAndDashbord/DriverNavbarAndDashBoard";
+import RiderNavbar from "./pages/Navbar/RiderNavbar";
+import BookRide from "./pages/RiderComps/BookRide/BookRide";
 
 function App() {
   return (
@@ -71,6 +73,16 @@ function App() {
             <>
               <AuthNavbar />
               <RiderSignUpMain />
+            </>
+          }
+        />
+        <Route
+          path="/Rider/*"
+          element={
+            <>
+              <AuthNavbar />
+              <RiderNavbar />
+              <Footer />
             </>
           }
         />

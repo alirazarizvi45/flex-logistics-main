@@ -4,13 +4,10 @@ import CommonButton from "../../components/CommonButton";
 import loginbg from "../../assets/loginbg.png";
 import driver from "../../assets/driver.png";
 import rider from "../../assets/rider.png";
-import RiderSignUpMain from "../RiderSignUp/RiderSignUpMain";
-import DriverSignUpMain from "../DriverSignUp/DriverSignUpMain";
+
 import { Link } from "react-router-dom";
 
 const MainSignUp = () => {
-  const RiderSignUps = [<RiderSignUpMain />];
-  const DriverSignUps = [<DriverSignUpMain />];
   return (
     <>
       <Box

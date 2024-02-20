@@ -154,7 +154,7 @@ const Home = () => {
       <EnjoyTheRide />
       <HowItWokrs />
       <Testimonials />
-      {/* <Faq/> */}
+      <Faq />
     </>
   );
 };
