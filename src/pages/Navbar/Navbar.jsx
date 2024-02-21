@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Hidden,
+  ListItemButton,
   Paper,
   Stack,
   SwipeableDrawer,
@@ -13,7 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import facebook from "../../assets/facebook.png";
 import linkedin from "../../assets/linkedin.png";
 import twitter from "../../assets/twitter.png";
@@ -262,6 +263,16 @@ const Navbar = () => {
                   >
                     <Typography sx={getLinkStyles("faq")}>FAQ</Typography>
                   </Link>
+                  <NavLink
+                    to="/Rider"
+                    style={{
+                      textDecoration: "none",
+                      color: "#000",
+                      fontFamily: theme.typography.subtitle1.fontFamily,
+                    }}
+                  >
+                    Rider
+                  </NavLink>
                   {/* <Link
                     to="/Dashboard"
                     sx={{
