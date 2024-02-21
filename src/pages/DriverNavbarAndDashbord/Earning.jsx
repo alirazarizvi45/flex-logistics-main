@@ -150,7 +150,7 @@ const Earning = () => {
               <ReChart />
             </Box>
           </Box>
-          <Typography variant="h3" color="#000" sx={{ margin: "20px 0px" }}>
+          <Typography variant="h3" color="#000" sx={{ margin: "20px 0px" ,textAlign:{ sm:'left',xs:'center'}}}>
             Overview
           </Typography>
           <Grid

@@ -56,47 +56,48 @@ const MyRides = () => {
   return (
     <>
      <Container maxWidth="lg">
-<Grid container sx={{display:'flex', alignItems:'center', justifyContent:'space-between'}} spacing={2}>
-    <Grid item lg={8} >
-        
-        <Typography variant='h2' sx={{color:'#000'}}>
-        History
-        </Typography>
-        </Grid> 
-        <Grid item lg={4} >
-          <Box sx={{display:'flex', flexDirection:{md:'row' ,xs:'column'}, justifyContent:'center',alignItems:'center', gap:2}}>
+<Grid container sx={{display:{lg:'flex'}, alignItems:'center', justifyContent:'space-between'}} spacing={2} mt={3}>
+       <Grid item lg={8} xs={12} >
+          
+          <Typography variant='h2' sx={{color:'#000', textAlign:{sm:'left' ,xs:'center'}}}>
+          History
+          </Typography>
+          </Grid> 
+          <Grid item lg={4} xs={12}>
+            <Box sx={{display:'flex', flexDirection:{md:'row' ,xs:'column'}, justifyContent:'center',alignItems:'center', gap:2}}>
 
-<Box sx={{display:'flex', gap:2}}>
-<Button sx={{background:'#373A41',color:'#fff',textTransform:'none','&:hover':{
-  background:'#373A41',
-  color:'#fff'
-}}}>
-Today
-</Button>
-<Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
-  background:'#373A41',
-  color:'#fff'
-}}}>
-Last week
-</Button>
-</Box>
-<Box sx={{display:'flex', gap:2}}>
-<Button sx={{background:'#F1F1F1', textTransform:'none', color:'#000' ,'&:hover':{
-  background:'#373A41',
-  color:'#fff'
-}}}>
-Last month
-</Button>
-<Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
-  background:'#373A41',
-  color:'#fff'
-}}}>
-Last year
-</Button>
-</Box>
+  <Box sx={{display:'flex', gap:2}}>
+  <Button sx={{background:'#373A41',color:'#fff',textTransform:'none','&:hover':{
+    background:'#373A41',
+    color:'#fff',
+    
+  }}}>
+  Today
+  </Button>
+  <Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
+    background:'#373A41',
+    color:'#fff'
+  }}}>
+  Last week
+  </Button>
+  </Box>
+  <Box sx={{display:'flex', gap:2}}>
+  <Button sx={{background:'#F1F1F1', textTransform:'none', color:'#000' ,'&:hover':{
+    background:'#373A41',
+    color:'#fff'
+  }}}>
+  Last month
+  </Button>
+  <Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
+    background:'#373A41',
+    color:'#fff'
+  }}}>
+  Last year
+  </Button>
+  </Box>
 
-          </Box>
-        </Grid>
+            </Box>
+          </Grid> 
 
 </Grid>
 
