@@ -1,8 +1,19 @@
-import React from "react";
-import { Box, Container, Rating, Stack, Typography } from "@mui/material";
-import CommonButton from "../../../components/CommonButton";
+import React, { useState } from "react";
+import {
+  Box,
+  Container,
+  IconButton,
+  Rating,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Nyambura from "../../../assets/nyambura.png";
+import EditIcon from "@mui/icons-material/Edit";
+import CommonButton from "../../../components/CommonButton";
+
 const Review = () => {
+  const [value, setValue] = useState();
   return (
     <>
       <Container maxWidth="sm">
@@ -42,10 +53,11 @@ const Review = () => {
             <Stack
               sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: { md: "row", xs: "column" },
                 alignItems: "center",
 
                 gap: "5px",
+                marginTop: "20px",
               }}
             >
               <Box>
@@ -83,6 +95,60 @@ const Review = () => {
                 </Box>
               </Box>
             </Stack>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: { md: "inherit", xs: "center" },
+                marginTop: "20px",
+              }}
+            >
+              <Typography variant="subtitle1" color="#373A41" fontWeight={600}>
+                Rate your trip
+              </Typography>
+
+              <Rating
+                name="simple-controlled"
+                value={value}
+                onChange={(event, newValue) => {
+                  setValue(newValue);
+                }}
+                size="large"
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+            >
+              <IconButton sx={{ color: "#F2B705" }}>
+                <EditIcon />
+              </IconButton>
+              <Typography variant="subtitle1" color="#373A41">
+                Write a review
+              </Typography>
+            </Box>
+            <Box>
+              <TextField
+                multiline
+                rows={4}
+                fullWidth
+                variant="outlined"
+                placeholder="Message"
+                sx={{
+                  backgroundColor: "#fff",
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                marginTop: "20px",
+              }}
+            >
+              <CommonButton fullWidth>Submit</CommonButton>
+            </Box>
           </Box>
         </Box>
       </Container>

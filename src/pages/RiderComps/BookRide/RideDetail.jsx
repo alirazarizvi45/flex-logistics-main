@@ -52,7 +52,8 @@ const RideDetail = () => {
               <Stack
                 sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: { md: "row", xs: "column" },
+                  alignItems: { md: "inherit", xs: "center" },
                   gap: "20px",
                 }}
               >

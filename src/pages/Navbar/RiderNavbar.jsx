@@ -21,7 +21,13 @@ import message from "../../assets/message.png";
 import bell from "../../assets/bell.png";
 import user from "../../assets/user.png";
 import WestIcon from "@mui/icons-material/West";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import BookRide from "../RiderComps/BookRide/BookRide";
 import MyRides from "../RiderComps/MyRidesComp/MyRides";
 import theme from "../../theme";
@@ -29,6 +35,7 @@ import AvailableRides from "../RiderComps/BookRide/AvailableRides";
 import RideDetail from "../RiderComps/BookRide/RideDetail";
 import Review from "../RiderComps/BookRide/Review";
 import { LiveRide } from "../RiderComps/BookRide/LiveRide";
+import ViewProfile from "../RiderComps/BookRide/ViewProfile";
 
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
@@ -51,8 +58,18 @@ const PlainSelect = styled(Select)({
 const RiderNavbar = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const location = useLocation();
-  const handleChange = (event) => {
-    setSelectedOption(event.target.value);
+  const navigate = useNavigate();
+  const handleMenuItemClick = (value) => {
+    setSelectedOption(value);
+    switch (value) {
+      case "viewprofile":
+        navigate("/Rider/ViewProfile");
+        break;
+      case "logout":
+        break;
+      default:
+        break;
+    }
   };
   const isActiveRoute = (route) => {
     return location.pathname === route;
@@ -157,14 +174,28 @@ const RiderNavbar = () => {
                       objectFit: "contain",
                     }}
                   />
-                  <PlainSelect value={selectedOption} onChange={handleChange}>
-                    <MenuItem value={"username"} sx={{ color: "#000000" }}>
+                  <PlainSelect value={selectedOption}>
+                    <MenuItem
+                      value={"username"}
+                      onClick={() => handleMenuItemClick("username")}
+                      sx={{ color: "#000000" }}
+                    >
                       Nyambura Wanjiru
                     </MenuItem>
-                    <MenuItem value={"viewprofile"} sx={{ color: "#000000" }}>
+
+                    <MenuItem
+                      value={"viewprofile"}
+                      onClick={() => handleMenuItemClick("viewprofile")}
+                      sx={{ color: "#000000" }}
+                    >
                       View Profile
                     </MenuItem>
-                    <MenuItem value={"logout"} sx={{ color: "#000000" }}>
+
+                    <MenuItem
+                      value={"logout"}
+                      onClick={() => handleMenuItemClick("logout")}
+                      sx={{ color: "#000000" }}
+                    >
                       Logout
                     </MenuItem>
                   </PlainSelect>
@@ -208,6 +239,14 @@ const RiderNavbar = () => {
               element={
                 <>
                   <MyRides />
+                </>
+              }
+            />
+            <Route
+              path="/ViewProfile"
+              element={
+                <>
+                  <ViewProfile />
                 </>
               }
             />
