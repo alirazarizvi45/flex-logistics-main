@@ -18,6 +18,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import CommonButton from '../../components/CommonButton'
 import { Avatar } from '@mui/material'
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded'
+import profile from "../../assets/profilelogo.png"
+import { Container } from '@mui/system'
 const Profile = () => {
   const [dob, setDob] = useState('')
 
@@ -36,12 +38,15 @@ const Profile = () => {
     setShowPassword2((prevShowPassword) => !prevShowPassword)
   }
   return (
-    <Grid container justifyContent='space-between' mt={5}>
-      <Grid item xs={11} md={8} mt={-2}>
+    <Container maxWidth='xl'>
+
+    <Grid container justifyContent='space-around' mt={5}>
+      <Grid item xs={11} md={8}>
         <Grid item xs={12}>
-          <Box position='relative'>
+          <Box position='relative' >
             <Box
               sx={{
+               
                 ml: '6%',
                 display: 'flex',
                 borderRadius: '100px',
@@ -54,7 +59,7 @@ const Profile = () => {
               }}
             >
               <img
-                src='../src/assets/Ellipse 85.png'
+                src={profile}
                 style={{
                   objectFit: 'cover',
                   objectPosition: 'top',
@@ -65,17 +70,17 @@ const Profile = () => {
                   display: 'flex',
                   position: 'absolute',
                   justifyContent: 'center',
-                  top: '60%',
+                  top: '45%',
                   backgroundColor: 'rgba(242, 183, 5, 1)',
-                  margin: '10px',
-                  marginLeft: '100px',
+                  margin: '20px',
+                  marginLeft: '60px',
                   zIndex: 2,
                   overflow: 'hidden',
                   padding: '5px',
                   borderRadius: '50%',
                 }}
               >
-                <CameraAltRoundedIcon fontSize='medium' variant='contained' />
+                <CameraAltRoundedIcon fontSize='small' variant='contained' />
               </Box>
             </Box>
           </Box>
@@ -88,7 +93,7 @@ const Profile = () => {
           ml={2}
           borderRadius='5px'
         >
-          <Grid item md={5} xs={12} mt={5}>
+          <Grid item md={5} xs={12} mt={8}>
             <Box
               sx={{
                 display: 'flex',
@@ -159,7 +164,7 @@ const Profile = () => {
               />
             </Box>
           </Grid>
-          <Grid item md={5} xs={12} mt={5}>
+          <Grid item md={5} xs={12} mt={8}>
             <Box
               sx={{
                 display: 'flex',
@@ -219,7 +224,7 @@ const Profile = () => {
             </Box>
           </Grid>
           <Grid item xs={3} flex={1} mb={2}>
-            <Box pt='20px'>
+            <Box pt='0px'>
               <CommonButton
                 loadingPosition='end'
                 endIcon={null}
@@ -238,16 +243,14 @@ const Profile = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} md={3}>
-        <Grid container justifyContent='flex-end'>
-          <Grid item xs={12} sm={12} md={12} lg={12} mt={12}>
-            <Card>
+      <Grid item xs={12} md={3} sx={{mt:{md:'90px' ,xs:'10px'}}}>
+      <Card>
               <CardContent>
-                <Typography color='customBlack.main' variant='h4' mb={2}>
+                <Typography color='customBlack.main' variant='h4' >
                   Reviews
                 </Typography>
                 <Divider />
-                <Box display='flex' flexDirection='column' mt={2}>
+                <Box display='flex' flexDirection='column'padding={1}>
                   <Box flexDirection='row' display='flex'>
                     <Avatar src='../src/assets/Group 1000008956.png' />
                     <Box display='flex' flexGrow={1} ml={2}>
@@ -275,7 +278,7 @@ const Profile = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box display='flex' flexWrap='wrap' mb={3} mt={1}>
+                  <Box display='flex' flexWrap='wrap' mb={3}>
                     <Typography color='rgba(90, 90, 90, 1);'>
                       Lorem Ipsum is simply dummy text of the printing and
                       typesetting industry
@@ -283,7 +286,7 @@ const Profile = () => {
                   </Box>
                 </Box>
                 <Divider />
-                <Box display='flex' flexDirection='column' mt={2}>
+                <Box display='flex' flexDirection='column'padding={1}>
                   <Box flexDirection='row' display='flex'>
                     <Avatar src='../src/assets/Group 1000008956.png' />
                     <Box display='flex' flexGrow={1} ml={2}>
@@ -311,7 +314,7 @@ const Profile = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box display='flex' flexWrap='wrap' mb={3} mt={1}>
+                  <Box display='flex' flexWrap='wrap'>
                     <Typography color='rgba(90, 90, 90, 1);'>
                       Lorem Ipsum is simply dummy text of the printing and
                       typesetting industry
@@ -319,7 +322,7 @@ const Profile = () => {
                   </Box>
                 </Box>
                 <Divider />
-                <Box display='flex' flexDirection='column' mt={2}>
+                <Box display='flex' flexDirection='column' p={1}>
                   <Box flexDirection='row' display='flex'>
                     <Avatar src='../src/assets/Group 1000008956.png' />
                     <Box display='flex' flexGrow={1} ml={2}>
@@ -347,7 +350,7 @@ const Profile = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box display='flex' flexWrap='wrap' mb={3} mt={1}>
+                  <Box display='flex' flexWrap='wrap' mt={1}>
                     <Typography color='rgba(90, 90, 90, 1);'>
                       Lorem Ipsum is simply dummy text of the printing and
                       typesetting industry
@@ -392,10 +395,9 @@ const Profile = () => {
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
       </Grid>
     </Grid>
+    </Container>
   )
 }
 
