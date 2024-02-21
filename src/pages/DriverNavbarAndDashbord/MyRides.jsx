@@ -1,7 +1,8 @@
 import React from "react";
-import { Grid,Container,Typography,Button, Divider, Box } from '@mui/material';
+import { Grid,Container,Typography,Button, Divider, Box, Stack } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import goll from '../../assets/1.png';
+import CommonButton from "../../components/CommonButton";
 const data = [
   {
     client: 'Fiza Zahra',
@@ -56,32 +57,25 @@ const MyRides = () => {
   return (
     <>
      <Container maxWidth="lg">
-<Grid container sx={{display:{lg:'flex'}, alignItems:'center', justifyContent:'space-between'}} spacing={2} mt={3}>
-       <Grid item lg={8} xs={12} >
-          
-          <Typography variant='h2' sx={{color:'#000', textAlign:{sm:'left' ,xs:'center'}}}>
-          History
-          </Typography>
-          </Grid> 
-          <Grid item lg={4} xs={12}>
-            <Box sx={{display:'flex', flexDirection:{md:'row' ,xs:'column'}, justifyContent:'center',alignItems:'center', gap:2}}>
 
-  <Box sx={{display:'flex', gap:2}}>
-  <Button sx={{background:'#373A41',color:'#fff',textTransform:'none','&:hover':{
+ <Stack direction="row" justifyContent="space-between" mt={4}>
+              <Typography variant="h3" color="#000">
+                Vehicles
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1 }}>
+              <Button sx={{background:'#373A41',color:'#fff',textTransform:'none','&:hover':{
     background:'#373A41',
     color:'#fff',
     
   }}}>
   Today
   </Button>
-  <Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
+              <Button sx={{background:'#F1F1F1',textTransform:'none', color:'#000' ,'&:hover':{
     background:'#373A41',
     color:'#fff'
   }}}>
-  Last week
+   Last week
   </Button>
-  </Box>
-  <Box sx={{display:'flex', gap:2}}>
   <Button sx={{background:'#F1F1F1', textTransform:'none', color:'#000' ,'&:hover':{
     background:'#373A41',
     color:'#fff'
@@ -94,12 +88,9 @@ const MyRides = () => {
   }}}>
   Last year
   </Button>
-  </Box>
-
-            </Box>
-          </Grid> 
-
-</Grid>
+                
+              </Box>
+            </Stack>
 
           <Grid
             container
