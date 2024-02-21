@@ -19,9 +19,8 @@ const RideDetail = () => {
         <Box
           sx={{
             background: "#373A41",
-            height: "60px",
-            width: "100%",
-            borderRadius: "5px 5px 0px 0px",
+            padding: "20px 0px",
+            borderRadius: "7px 7px 0px 0px ",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -164,13 +163,25 @@ const RideDetail = () => {
                         >
                           Name:
                         </Typography>
-                        <Typography variant="subtitle1" color="#373A41">
+                        <Typography
+                          variant="subtitle1"
+                          color="#373A41"
+                          fontWeight={600}
+                        >
                           Number:
                         </Typography>
-                        <Typography variant="subtitle1" color="#373A41">
+                        <Typography
+                          variant="subtitle1"
+                          color="#373A41"
+                          fontWeight={600}
+                        >
                           Model:
                         </Typography>
-                        <Typography variant="subtitle1" color="#373A41">
+                        <Typography
+                          variant="subtitle1"
+                          color="#373A41"
+                          fontWeight={600}
+                        >
                           color:
                         </Typography>
                       </Box>

@@ -27,6 +27,7 @@ import MyRides from "../RiderComps/MyRidesComp/MyRides";
 import theme from "../../theme";
 import AvailableRides from "../RiderComps/BookRide/AvailableRides";
 import RideDetail from "../RiderComps/BookRide/RideDetail";
+import Review from "../RiderComps/BookRide/Review";
 
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
@@ -194,6 +195,7 @@ const RiderNavbar = () => {
                   <br />
                   <RideDetail />
                   <br />
+                  <Review />
                 </>
               }
             />
