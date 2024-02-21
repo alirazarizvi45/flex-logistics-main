@@ -60,7 +60,7 @@ export const LiveRide = () => {
                     objectFit: 'contain',
                   }}
                 ></Avatar>
-                <Box display='flex' flexDirection='column' ml={2} mt={1}>
+                <Box display='flex' flexDirection='column' ml={2} mt={1} flexGrow={1}>
                   <Typography color='customBlack.main' variant='h5'>
                     Nyambura Wanjiru
                   </Typography>
@@ -82,7 +82,6 @@ export const LiveRide = () => {
                     style={{
                       width: '70%',
                       height: '70%',
-                      marginLeft: '100%',
                       objectFit: 'contain',
                     }}
                   />
