@@ -12,7 +12,7 @@ const Support = () => {
   return (
     <>
         <Container maxWidth='lg'>
-        <Box sx={{display:'flex', justifyContent:'end' ,mt:'30px'}}>
+        <Box sx={{display:'flex', justifyContent:{sm:'end', xs:"center"} ,mt:{xs:'40px'}}}>
 
         <TextField
       id="search"
@@ -29,7 +29,7 @@ const Support = () => {
       }}
     />
         </Box>
-        <Typography variant='h4' sx={{color:'#373A41', mb:'30px'}}>
+        <Typography variant='h4' sx={{color:'#373A41', mb:'30px', margin:{xs:'20px'}, textAlign:{xs:'center',sm:"left"}}}>
             Help Center
         </Typography>
     <Box sx={{boxShadow:' rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'}}>

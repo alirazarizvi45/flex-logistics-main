@@ -66,7 +66,7 @@ const DriverDashboardHome = () => {
                       fontWeight="bold"
                       mt={2}
                     >
-                      Fiza Zahra{" "}
+                      Fiza Zahra
                     </Typography>
                     <Typography variant="subtitle1" color="#000">
                       Nairobi, Kenya
@@ -111,7 +111,7 @@ const DriverDashboardHome = () => {
                         Chat
                       </Button>
                     </Stack>
-                    <Divider sx={{ backgroundColor: "red", mt: "20px" }} />
+                    <Divider sx={{ backgroundColor: "#000", mt: "20px" }} />
                     <Box
                       sx={{ display: "flex", justifyContent: "space-around" }}
                     >
