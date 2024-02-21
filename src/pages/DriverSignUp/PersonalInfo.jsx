@@ -200,7 +200,7 @@ const PersonalInfo = () => {
                 fullWidth
               />
             </Box>
-            <Box pt="30px">
+            <Box mt="30px">
               <CommonButton fullWidth>Submit</CommonButton>
             </Box>
           </Grid>
