@@ -98,6 +98,7 @@ const RideDetail = () => {
                   <Box
                     sx={{
                       display: "flex",
+                      flexDirection: { md: "row", xs: "column" },
                       gap: "10px",
                       marginTop: "10px",
                     }}

@@ -197,6 +197,7 @@ const RiderNavbar = () => {
                   <RideDetail />
                   <br />
                   <Review />
+                  <br />
                   <LiveRide />
                   <br />
                 </>
