@@ -294,7 +294,7 @@ const MyRides = () => {
                 key={index}
                 sx={{
                   padding: "30px",
-                  background: "#E0E3EA",
+                  background: "#fff",
                   mt: "20px",
                   display: "flex",
                   flexDirection: { md: "row", xs: "column" },
