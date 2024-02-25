@@ -92,7 +92,7 @@ const MainNav = ({ bgColor }) => {
               }}
             >
               <CommonButton
-                to="/Login"
+                to="/Dashboard"
                 component={Link}
                 sx={{
                   backgroundColor: "#F2B705",

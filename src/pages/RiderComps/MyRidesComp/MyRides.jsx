@@ -1,15 +1,12 @@
 import { Box } from "@mui/material";
 import React from "react";
+import ControlPanel from "./ControlPanel";
 
 const MyRides = () => {
   return (
     <>
-      <Box
-        sx={{
-          color: "black",
-        }}
-      >
-        <h1>My Rides</h1>
+      <Box>
+        <ControlPanel />
       </Box>
     </>
   );

@@ -36,6 +36,7 @@ import RideDetail from "../RiderComps/BookRide/RideDetail";
 import Review from "../RiderComps/BookRide/Review";
 import { LiveRide } from "../RiderComps/BookRide/LiveRide";
 import ViewProfile from "../RiderComps/BookRide/ViewProfile";
+import EditBooking from "../RiderComps/BookRide/EditBooking";
 
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
@@ -212,7 +213,6 @@ const RiderNavbar = () => {
           flexGrow: 1,
           p: 2,
           background: "#F9F9F9",
-          minHeight: "100vh",
         }}
       >
         <Container maxWidth="lg">
@@ -247,6 +247,14 @@ const RiderNavbar = () => {
               element={
                 <>
                   <ViewProfile />
+                </>
+              }
+            />
+            <Route
+              path="/EditBooking"
+              element={
+                <>
+                  <EditBooking />
                 </>
               }
             />

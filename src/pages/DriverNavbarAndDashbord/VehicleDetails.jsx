@@ -43,7 +43,12 @@ const VehicleDetails = () => {
       <Container maxWidth="xl">
         {!showRegisterVehicle && !showEditDocuments && (
           <Box>
-            <Stack direction="row" justifyContent="space-between" mt={4}>
+            <Stack
+              direction={{ md: "row", xs: "column" }}
+              justifyContent="space-between"
+              gap={{ md: "unset", xs: "10px" }}
+              mt={4}
+            >
               <Typography variant="h3" color="#000">
                 Vehicles
               </Typography>
@@ -63,7 +68,7 @@ const VehicleDetails = () => {
                   borderRadius: "5px",
                   boxShadow:
                     "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
-                  padding: "40px 20px ",
+                  padding: " 20px ",
                   background: "#fff",
                   marginTop: "20px",
                   display: "flex",
@@ -74,24 +79,45 @@ const VehicleDetails = () => {
                 spacing={2}
               >
                 <Grid item md={6} xs={12} mt={2}>
-                  <img
-                    src={data.img}
-                    alt="blackcar"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
+                  <Box>
+                    <img
+                      src={data.img}
+                      alt="blackcar"
+                      style={{
+                        objectFit: "contain",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </Box>
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <Typography
                     variant="subtitle2"
                     fontWeight="bold"
                     color="#373A41"
+                    textAlign="center"
                   >
                     Vehicle Detail:
                   </Typography>
-                  <Box sx={{ display: "flex", gap: 10, mt: "30px" }}>
-                    <Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { md: "row", xs: "column" },
+                      justifyContent: "space-around",
+                      gap: { md: "20px", xs: "10px" },
+                      mt: "30px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         Name
                       </Typography>
@@ -103,7 +129,14 @@ const VehicleDetails = () => {
                         {data.name}
                       </Typography>
                     </Box>
-                    <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         Number
                       </Typography>
@@ -115,7 +148,14 @@ const VehicleDetails = () => {
                         {data.number}
                       </Typography>
                     </Box>
-                    <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         Model
                       </Typography>
@@ -128,8 +168,24 @@ const VehicleDetails = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box sx={{ display: "flex", gap: 10, mt: "20px" }}>
-                    <Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { md: "row", xs: "column" },
+                      justifyContent: "space-around",
+                      gap: { md: "20px", xs: "10px" },
+                      mt: "30px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         Color
                       </Typography>
@@ -141,7 +197,14 @@ const VehicleDetails = () => {
                         {data.color}
                       </Typography>
                     </Box>
-                    <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         No. of Seats
                       </Typography>
@@ -153,7 +216,14 @@ const VehicleDetails = () => {
                         {data.seats}
                       </Typography>
                     </Box>
-                    <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { md: "column", xs: "row" },
+                        alignItems: "center",
+                        gap: { md: "unset", xs: "10px" },
+                      }}
+                    >
                       <Typography variant="subtitle1" color="#5A5A5A">
                         Year
                       </Typography>
