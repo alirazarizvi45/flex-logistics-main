@@ -59,7 +59,7 @@ function App() {
         />
 
         <Route
-          path="/Driver SignUp"
+          path="/DriverSignUp"
           element={
             <>
               <AuthNavbar />
@@ -68,7 +68,7 @@ function App() {
           }
         />
         <Route
-          path="/Rider SignUp"
+          path="/RiderSignUp"
           element={
             <>
               <AuthNavbar />

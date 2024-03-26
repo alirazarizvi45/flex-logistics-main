@@ -59,7 +59,7 @@ const MainSignUp = () => {
                 }}
               >
                 <CommonButton
-                  to="/Driver SignUp"
+                  to="/DriverSignUp"
                   component={Link}
                   startIcon={
                     <img
@@ -87,7 +87,7 @@ const MainSignUp = () => {
                   As a Driver
                 </CommonButton>
                 <CommonButton
-                  to="/Rider SignUp"
+                  to="/RiderSignUp"
                   component={Link}
                   startIcon={
                     <img

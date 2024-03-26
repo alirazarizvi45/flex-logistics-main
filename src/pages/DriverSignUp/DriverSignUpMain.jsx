@@ -19,10 +19,60 @@ import VehicleRegistration from "./VehicleRegistration";
 import VehiclePicture from "./VehiclePicture";
 const DriverSignUpMain = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [confirmation, setConfirmation] = useState(false);
+  const [phoneresendTimer, setphoneresendTimer] = useState(0);
+  const [loading, setloading] = useState(false);
+  const [phoneResendloading, setphoneResendloading] = useState(false);
+  const [notificationProps, setnotificationProps] = useState({
+    error: "",
+    message: "",
+    modal: false,
+  });
+  const [formData, setFormData] = useState({
+    telephone: "",
+  });
 
-  const RiderSignUps = [
-    <DriverSignUpOne />,
-    <DriverSignUpTwo />,
+  const handleNext = () => {
+    setActiveStep((prevStep) =>
+      Math.min(prevStep + 1, DriverSignUps.length - 1)
+    );
+
+    // if (confirmation) {
+    //   setActiveStep((prevStep) =>
+    //     Math.min(prevStep + 1, DriverSignUps.length - 1)
+    //   );
+    // }
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevStep) => Math.max(prevStep - 1, 0));
+  };
+
+  const DriverSignUps = [
+    <DriverSignUpOne
+      handleNext={handleNext}
+      setConfirmation={setConfirmation}
+      setphoneresendTimer={setphoneresendTimer}
+      setloading={setloading}
+      loading={loading}
+      setnotificationProps={setnotificationProps}
+      notificationProps={notificationProps}
+      formData={formData}
+      setFormData={setFormData}
+    />,
+    <DriverSignUpTwo
+      handleNext={handleNext}
+      setConfirmation={setConfirmation}
+      setphoneresendTimer={setphoneresendTimer}
+      setloading={setloading}
+      setphoneResendloading={setphoneResendloading}
+      setnotificationProps={setnotificationProps}
+      notificationProps={notificationProps}
+      formData={formData}
+      phoneResendloading={phoneResendloading}
+      phoneresendTimer={phoneresendTimer}
+      confirmation={confirmation}
+    />,
     <DriverSignUpThree />,
     <DriverSignUpFour />,
     <DriverSignupFive />,
@@ -34,16 +84,6 @@ const DriverSignUpMain = () => {
     <VehicleRegistration />,
     <VehiclePicture />,
   ];
-
-  const handleNext = () => {
-    setActiveStep((prevStep) =>
-      Math.min(prevStep + 1, RiderSignUps.length - 1)
-    );
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevStep) => Math.max(prevStep - 1, 0));
-  };
 
   return (
     <Box
@@ -81,7 +121,7 @@ const DriverSignUpMain = () => {
               display: "flex",
               gap: "10px",
             }}
-            disabled={activeStep === RiderSignUps.length - 1}
+            disabled={activeStep === DriverSignUps.length - 1}
             onClick={handleNext}
           >
             <Typography variant="subtitle2">Next</Typography>
@@ -90,7 +130,8 @@ const DriverSignUpMain = () => {
         </Box>
 
         <Container maxWidth={activeStep === 5 ? "md" : "sm"}>
-          {RiderSignUps[activeStep]}
+          {React.cloneElement(DriverSignUps[activeStep])}{" "}
+          {/* Pass confirmation as prop */}
         </Container>
       </Container>
     </Box>

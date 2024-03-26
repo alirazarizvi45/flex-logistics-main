@@ -1,19 +1,98 @@
-import { Box, Divider, Input, TextField, Typography } from "@mui/material";
-import React from "react";
-import CommonButton from "../../components/CommonButton";
+import React, { useState } from "react";
+import { Box, CircularProgress, Divider, Typography } from "@mui/material";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../constants/firebaseConfig";
+import NotificationModal from "../../components/NotificationModal";
+import { MuiOtpInput } from "mui-one-time-password-input";
 
-const DriverSignUpTwo = () => {
+const DriverSignUpTwo = ({
+  handleNext,
+  setConfirmation,
+  setphoneresendTimer,
+  setphoneResendloading,
+  setloading,
+  setnotificationProps,
+  notificationProps,
+  phoneresendTimer,
+  phoneResendloading,
+  formData,
+  confirmation,
+}) => {
+  const [mobileOtp, setMobileOtp] = useState("");
+  const [phoneNumberVerification, setPhoneNumberVerification] = useState(false);
+
+  // const formatPhoneNumber = (phoneNumber) => {
+  //   if (typeof phoneNumber !== "string") {
+  //     return "";
+  //   }
+  //   const startingDigits = phoneNumber.slice(0, 7);
+  //   const endingDigits = phoneNumber.slice(-2);
+  //   const middleDigits = "*".repeat(phoneNumber.length - 3);
+
+  //   return `${startingDigits}${middleDigits}${endingDigits}`;
+  // };
+
+  const resendVerificationCode = async () => {
+    try {
+      setloading(true);
+      const container = document.getElementById("recaptcha-container");
+      container.innerHTML = "";
+      const appVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+      });
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        formData.telephone,
+        appVerifier
+      );
+
+      setConfirmation(confirmationResult);
+      setphoneresendTimer(60);
+      setphoneResendloading(false);
+    } catch (error) {
+      console.log(error);
+      setphoneResendloading(false);
+      setnotificationProps({
+        ...notificationProps,
+        modal: true,
+        error: true,
+        message: error.message,
+      });
+    }
+  };
+
+  const handleCompletePhone = async () => {
+    try {
+      if (!confirmation) {
+        throw new Error("Confirmation not available");
+      }
+      await confirmation.confirm(mobileOtp);
+      setPhoneNumberVerification(true);
+      console.log("OTP Confirmed successfully");
+      handleNext();
+    } catch (error) {
+      console.log(error);
+      setnotificationProps({
+        ...notificationProps,
+        modal: true,
+        error: true,
+        message: error.message,
+      });
+    }
+  };
+
   return (
     <>
-      <Box
-        sx={{
-          padding: "20px 40px",
-        }}
-      >
+      <Box sx={{ padding: "20px 40px" }}>
+        {notificationProps?.modal && (
+          <NotificationModal
+            notificationProps={notificationProps}
+            setnotificationProps={setnotificationProps}
+          />
+        )}
         <Box sx={{ textAlign: "center" }}>
-          <Typography variant="h2" color="#fff">
-            Sign up
-          </Typography>
+          <div id="recaptcha-container"></div>
+          <Typography variant="h2">Sign up</Typography>
           <Divider
             sx={{
               width: { sm: "20%", xs: "30%" },
@@ -30,59 +109,56 @@ const DriverSignUpTwo = () => {
           }}
         >
           <Typography variant="subtitle2" sx={{ lineHeight: "30px" }}>
-            Enter the 4 digit code sent to you at ******9
+            Enter the 6 digit code sent to you at{" "}
+            {/* {formatPhoneNumber(formData.telephone)} */}
           </Typography>
         </Box>
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-evenly",
+            justifyContent: "center",
             alignItems: "center",
             marginTop: "30px",
           }}
         >
-          <TextField
-            InputProps={{
-              style: {
-                border: "1px solid #F2B705",
-                color: "white",
-                borderRadius: "10px",
-                width: 50,
-                height: 50,
-              },
-            }}
-          />
-
-          <TextField
-            InputProps={{
-              style: {
-                border: "1px solid #F2B705",
-                color: "white",
-                borderRadius: "10px",
-                width: 50,
-                height: 50,
-              },
-            }}
-          />
-          <TextField
-            InputProps={{
-              style: {
-                border: "1px solid #F2B705",
-                color: "white",
-                borderRadius: "10px",
-                width: 50,
-                height: 50,
-              },
-            }}
-          />
-          <TextField
-            InputProps={{
-              style: {
-                border: "1px solid #F2B705",
-                color: "white",
-                borderRadius: "10px",
-                width: 50,
-                height: 50,
+          <MuiOtpInput
+            value={mobileOtp}
+            onChange={(newValue) => setMobileOtp(newValue)}
+            length={6}
+            onComplete={handleCompletePhone}
+            validateChar={(character, index) => !isNaN(character)}
+            TextFieldsProps={{
+              size: "large",
+              placeholder: "*",
+              sx: {
+                color: "text.primary",
+                "& label.Mui-focused": {
+                  color: "text.primary",
+                },
+                "& label": {
+                  color: "text.primary",
+                  fontFamily: "Russo One",
+                },
+                "& .MuiInput-underline:after": {
+                  borderBottomColor: "#F2B705",
+                },
+                "& .MuiOutlinedInput-root": {
+                  color: "text.primary",
+                  "& fieldset": {
+                    borderColor: "#F2B705",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#F2B705",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#F2B705",
+                  },
+                  "&.Mui-disabled": {
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#F2B705",
+                    },
+                  },
+                },
               },
             }}
           />
@@ -93,20 +169,26 @@ const DriverSignUpTwo = () => {
             padding: { sm: "10px 60px", xs: "10px" },
           }}
         >
-          <CommonButton
-            sx={{
-              color: "#C0C0C0",
-              textAlign: "center",
-              lineHeight: "20px",
-              border: "1px solid #C0C0C0",
-              padding: "10px",
-              borderRadius: "5px",
-              textTransform: "none",
-            }}
-            fullWidth
-          >
-            I didn’t receive code (0:07)
-          </CommonButton>
+          <Box textAlign="center">
+            {phoneresendTimer > 0 ? (
+              <Typography>Resend code in {phoneresendTimer} seconds</Typography>
+            ) : (
+              <Typography>
+                Did not Receive Code?{" "}
+                {phoneResendloading ? (
+                  <CircularProgress size={20} sx={{ color: "#F2B705" }} />
+                ) : (
+                  <Box
+                    component="span"
+                    sx={{ color: "#F2B705", cursor: "pointer" }}
+                    onClick={resendVerificationCode}
+                  >
+                    Resend Code
+                  </Box>
+                )}
+              </Typography>
+            )}
+          </Box>
         </Box>
       </Box>
     </>
