@@ -1,30 +1,94 @@
-import { Box, Container, Typography } from "@mui/material";
-import React, { useRef, useState } from "react";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import upload from "../../assets/upload.png";
+import { Box, Container, IconButton, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import CommonButton from "../../components/CommonButton";
 
-const VehicleRegistration = () => {
-  const fileInputRef = useRef(null);
-  const [uploadedImage, setUploadedImage] = useState(null);
+import { toast, ToastContainer } from "react-toastify";
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
+import { useSelector } from "react-redux";
+import UploadIcon from "@mui/icons-material/Upload";
+import axiosInstance from "../../constants/axiosInstance";
+const VehicleRegistration = ({ handleNext, newUser }) => {
+  const { user, role } = useSelector((state) => state?.user);
+  console.log(`the user is ${role}`);
+  const userId = user?.id;
+  console.log(userId, "userId");
+  const [errors, setErrors] = useState({
+    vehicle_registration_image: "",
+  });
+  const [image, setImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setloading] = useState(null);
+
+  const inputRef = { vehicle_registration_image: useRef() };
+
+  const validation = () => {
+    let isValid = true;
+    let newErrors = {};
+    if (!image) {
+      isValid = false;
+      newErrors.vehicle_registration_image =
+        "Please select your Cnic Back image";
+    }
+    setErrors(newErrors);
+    return isValid;
   };
+
+  const focusOnErrorField = () => {
+    if (errors.vehicle_registration_image) {
+      inputRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    focusOnErrorField();
+  }, [errors]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log("Selected file:", file);
-    // Read the file and convert it to a data URL
-    const reader = new FileReader();
-    reader.onload = () => {
-      setUploadedImage(reader.result);
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedFile(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setImage(file);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
+    try {
+      if (validation() && userId) {
+        setloading(true);
+        const formData = new FormData();
+
+        formData.append("vehicle_registration_image", image);
+        formData.append("id", userId);
+        const {
+          data: { success },
+        } = await axiosInstance.post(
+          "add-vehicle-registration-image",
+          formData
+        );
+        if (success) {
+          console.log("Image uploaded:", success);
+          toast.success("Image uploaded successfully!");
+        }
+      }
+      setTimeout(() => {
+        handleNext();
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to upload image.", error);
+      console.log("Error uploading image:", error);
+    } finally {
+      setloading(false);
+    }
   };
 
   return (
     <>
+      <ToastContainer />
       <Box
         sx={{
           padding: "40px",
@@ -79,16 +143,11 @@ const VehicleRegistration = () => {
                 alignItems: "center",
                 gap: "20px",
               }}
+              onClick={() => inputRef.current.click()}
             >
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              {uploadedImage ? (
+              {selectedFile ? (
                 <img
-                  src={uploadedImage}
+                  src={image ? selectedFile : "Logo"}
                   alt="uploaded"
                   style={{
                     width: "150px",
@@ -97,20 +156,24 @@ const VehicleRegistration = () => {
                   }}
                 />
               ) : (
-                <img
-                  src={upload}
-                  alt="upload"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    objectFit: "contain",
-                    cursor: "pointer",
+                <IconButton
+                  sx={{
+                    fontSize: "150px",
+                    color: "#fff",
                   }}
-                  onClick={handleUploadClick}
-                />
+                >
+                  <UploadIcon />
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </IconButton>
               )}
               <Typography variant="subtitle2" textAlign="center">
-                Upload Photo
+                Select Photo
               </Typography>
             </Box>
           </Box>
@@ -121,7 +184,7 @@ const VehicleRegistration = () => {
             padding: "10px 50px",
           }}
         >
-          <CommonButton fullWidth onClick={handleUploadClick}>
+          <CommonButton fullWidth onClick={handleImageUpload}>
             Upload Photo
           </CommonButton>
         </Box>

@@ -1,5 +1,5 @@
 import { Box, Container, Stack } from "@mui/system";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import map from "../../assets/map1.png";
 import profilelogo from "../../assets/profilelogo.png";
 import goll from "../../assets/redgol.png";
@@ -11,9 +11,138 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import AdjustIcon from "@mui/icons-material/Adjust";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import NotificationModal from "../../components/NotificationModal";
+import { useSocket } from "../../components/SocketContext";
+import { useDispatch, useSelector } from "react-redux";
+import GoogleMap from "../RiderComps/BookRide/GoogleMap";
+import {
+  getTripRequestAsync,
+  setTripInfo,
+  updateTripStatus,
+} from "../../ReducerSlices/tripInfo/tripInfoSlice";
+import axiosInstance from "../../constants/axiosInstance";
+import DriverGoogleMap from "./DriverGoogleMap";
 const DriverDashboardHome = () => {
+  const { user } = useSelector((state) => state.user);
+
+  console.log(user, "user");
+  const { tripInfo, status: tripStatus } = useSelector(
+    (state) => state.tripInfo || {}
+  );
+  console.log("tripInfo in driver dashboard", tripInfo);
+  const dispatch = useDispatch();
+  const { socket, socketId } = useSocket();
+  const driverSocketId = socketId;
+  console.log(driverSocketId, "driver socket id");
+  const [notificationProps, setnotificationProps] = useState({
+    error: "",
+    message: "",
+    modal: false,
+    pickupLocation: "",
+    dropOffLocation: "",
+    travelType: "",
+    paymentMethod: "",
+  });
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("tripRequest", (tripDetails) => {
+        const {
+          tripId,
+          riderId,
+          pickupLocation,
+          dropOffLocation,
+          travelType,
+          paymentMethod,
+        } = tripDetails;
+        console.log("tripDetails is ", tripDetails);
+        console.log("Trip ID is:", tripId);
+        setnotificationProps({
+          error: "",
+          message: "",
+          modal: true,
+          tripId,
+          pickupLocation,
+          dropOffLocation,
+          travelType,
+          paymentMethod,
+          riderId,
+        });
+      });
+      socket.on("joinTripRoom", ({ roomId }) => {
+        console.log(`Joined room: ${roomId}`);
+        // Handle room joining logic here if needed
+      });
+      return () => {
+        socket.off("tripRequest");
+        socket.off("tripRequestAccepted");
+        socket.off("joinTripRoom");
+      };
+    } else {
+      console.log("Socket is not initialized.");
+    }
+  }, [socket]);
+  useEffect(() => {
+    if (notificationProps.tripId && tripStatus === "succeeded") {
+      dispatch(getTripRequestAsync(notificationProps.tripId));
+    }
+  }, [dispatch, notificationProps.tripId]);
+
+  const handleAcceptTripRequest = async () => {
+    console.log("Accept button clicked");
+    if (driverSocketId) {
+      try {
+        // Update trip status in the database
+        const response = await axiosInstance.put(
+          `/update-trip-status/${notificationProps.tripId}`,
+          {
+            status: "accepted",
+            driverId: user.id,
+          }
+        );
+
+        if (response.data.success) {
+          // Update Redux store
+          const updatedTripInfo = response.data.data;
+          console.log("updated trip info", updatedTripInfo);
+          dispatch(setTripInfo(updatedTripInfo));
+
+          //send updated trip info to rider
+
+          // Prepare confirmation message
+          const confirmationMsg = {
+            tripId: notificationProps.tripId,
+            riderId: notificationProps.riderId,
+            driverId: user.id,
+            message: `Your trip request has been accepted by ${user.firstName} ${user.lastName}.`,
+          };
+
+          // Emit acceptance to server
+          socket.emit("tripRequestAccepted", confirmationMsg);
+          socket.emit("updateTripStatus", updatedTripInfo);
+          socket.emit("joinTripRoom", { roomId: confirmationMsg.tripId });
+          dispatch(updateTripStatus("accepted"));
+          console.log("Trip accepted successfully");
+        } else {
+          console.error("Failed to accept trip");
+        }
+      } catch (error) {
+        console.error("Error accepting trip:", error);
+      }
+    } else {
+      console.log("Driver socket ID not available yet.");
+    }
+  };
+
   return (
     <>
+      {notificationProps?.modal && (
+        <NotificationModal
+          notificationProps={notificationProps}
+          setnotificationProps={setnotificationProps}
+          onAcceptRequest={handleAcceptTripRequest}
+        />
+      )}
       <Box
         sx={{
           minHeight: "100vh",
@@ -26,22 +155,50 @@ const DriverDashboardHome = () => {
             </Typography>
             <Grid container spacing={8}>
               <Grid item md={8} xs={12}>
-                <img src={map} alt="" width="100%" height="100%" />
+                <DriverGoogleMap />
               </Grid>
 
               <Grid item md={4} xs={12}>
                 <Box
                   sx={{
-                    width: "261px",
-                    height: "501px",
                     background: "#fff",
                     padding: "20px",
                     textAlign: "center",
                     borderRadius: "5px",
                   }}
                 >
-                  <Box sx={{ position: "relative", bottom: "70px" }}>
-                    <img src={profilelogo} alt="profilelogo" />
+                  {/* {tripRequests.map((request, index) => ( */}
+                  <Box
+                    sx={
+                      {
+                        // position:
+                        //   index === currentRequestIndex
+                        //     ? "relative"
+                        //     : "absolute",
+                        // bottom: index === currentRequestIndex ? "70px" : 0,
+                        // opacity: index === currentRequestIndex ? 1 : 0,
+                        // transition: "opacity 0.5s ease-in-out",
+                      }
+                    }
+                  >
+                    {tripInfo && (
+                      <img
+                        src={
+                          tripInfo.riderPic
+                            ? `../../../server/uploads/${tripInfo.riderPic
+                                .split("\\")
+                                .pop()}`
+                            : profilelogo
+                        }
+                        alt="Rider"
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    )}
+
                     <Box
                       sx={{
                         display: "flex",
@@ -60,22 +217,16 @@ const DriverDashboardHome = () => {
                       </Typography>
                     </Box>
 
-                    <Typography
-                      variant="subtitle2"
-                      color="#000"
-                      fontWeight="bold"
-                      mt={2}
-                    >
-                      Fiza Zahra
-                    </Typography>
                     <Typography variant="subtitle1" color="#000">
-                      Nairobi, Kenya
+                      {tripInfo?.riderFirstName && tripInfo?.riderLastName
+                        ? `${tripInfo.riderFirstName} ${tripInfo.riderLastName}`
+                        : "Nayambura"}
                     </Typography>
 
                     <Stack
                       sx={{ margin: "20px 0px" }}
                       spacing={1}
-                      direction="row"
+                      direction="column"
                       justifyContent="center"
                     >
                       <Button
@@ -92,7 +243,7 @@ const DriverDashboardHome = () => {
                           },
                         }}
                       >
-                        Call
+                        {tripInfo?.riderPhoneNumber}
                       </Button>
                       <Button
                         startIcon={<ChatIcon />}
@@ -121,7 +272,6 @@ const DriverDashboardHome = () => {
                           orientation="vertical"
                           sx={{
                             height: "23%",
-
                             border: "1px dashed #373A41",
                           }}
                         />
@@ -129,10 +279,14 @@ const DriverDashboardHome = () => {
                       </Stack>
                       <Stack mt={3} spacing={3}>
                         <Typography variant="subtitle1" color="#5A5A5A">
-                          123 ABC Street, Nairobi
+                          {tripInfo?.pickupLocation
+                            ? tripInfo?.pickupLocation
+                            : "Nairobi, Kenya"}
                         </Typography>
                         <Typography variant="subtitle1" color="#5A5A5A">
-                          Airport South Road, Embakasi, Nairobi
+                          {tripInfo?.dropOffLocation
+                            ? tripInfo?.dropOffLocation
+                            : " Airport South Road, Embakasi, Nairobi"}
                         </Typography>
                       </Stack>
                     </Box>
@@ -177,6 +331,7 @@ const DriverDashboardHome = () => {
                       Start Ride
                     </Button>
                   </Box>
+                  {/* ))} */}
                 </Box>
               </Grid>
             </Grid>

@@ -31,7 +31,10 @@ const DriverSignUpMain = () => {
   const [formData, setFormData] = useState({
     telephone: "",
   });
-
+  const [newUser, setNewUser] = useState(null);
+  const handleNewUserChange = (user) => {
+    setNewUser(user);
+  };
   const handleNext = () => {
     setActiveStep((prevStep) =>
       Math.min(prevStep + 1, DriverSignUps.length - 1)
@@ -76,13 +79,16 @@ const DriverSignUpMain = () => {
     <DriverSignUpThree />,
     <DriverSignUpFour />,
     <DriverSignupFive />,
-    <PersonalInfo />,
-    <LicenseUpload />,
-    <ProfilePic />,
-    <IDFront />,
-    <IDBack />,
-    <VehicleRegistration />,
-    <VehiclePicture />,
+    <PersonalInfo
+      handleNext={handleNext}
+      onNewUserChange={handleNewUserChange}
+    />,
+    <LicenseUpload handleNext={handleNext} newUser={newUser} />,
+    <ProfilePic handleNext={handleNext} newUser={newUser} />,
+    <IDFront handleNext={handleNext} newUser={newUser} />,
+    <IDBack handleNext={handleNext} newUser={newUser} />,
+    <VehicleRegistration handleNext={handleNext} newUser={newUser} />,
+    <VehiclePicture newUser={newUser} />,
   ];
 
   return (
@@ -124,7 +130,9 @@ const DriverSignUpMain = () => {
             disabled={activeStep === DriverSignUps.length - 1}
             onClick={handleNext}
           >
-            <Typography variant="subtitle2">Next</Typography>
+            <Typography variant="subtitle2">
+              {activeStep === DriverSignUps.length - 1 ? "Finished" : "Next"}
+            </Typography>
             <EastIcon sx={{ color: "#fff" }} />
           </IconButton>
         </Box>

@@ -1,23 +1,31 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBoO48Dk-1tR-bi_esF9Yqee90DBI01lVc",
-  authDomain: "flex-logistics-dc7dd.firebaseapp.com",
-  projectId: "flex-logistics-dc7dd",
-  storageBucket: "flex-logistics-dc7dd.appspot.com",
-  messagingSenderId: "717550115099",
-  appId: "1:717550115099:web:af2eb04e696ae00a99dbbe",
-  measurementId: "G-G8H9MWR958",
+  apiKey: "AIzaSyCwutXkkGB0boaYpr8owaEGG5iUKHQZ2Os",
+  authDomain: "flex-logistics-1709552555929.firebaseapp.com",
+  projectId: "flex-logistics-1709552555929",
+  storageBucket: "flex-logistics-1709552555929.appspot.com",
+  messagingSenderId: "480043356372",
+  appId: "1:480043356372:web:2ece2fa47c6687cd062b41",
+  measurementId: "G-NXB6YVV79D",
+  dataBaseUrl:
+    "https://flex-logistics-1709552555929-default-rtdb.firebaseio.com/",
 };
 
-// Initialize Firebase
+// Initialize Firebaseconst app = initializeApp(firebaseConfig);
 const app = initializeApp(firebaseConfig);
-// Get Firebase auth instance
+const firebaseDb = getFirestore(app);
 const auth = getAuth(app);
-export { auth };
+const firebaseStorage = getStorage(app);
+const db = getDatabase(app);
+export { firebaseDb, auth, firebaseStorage, db };

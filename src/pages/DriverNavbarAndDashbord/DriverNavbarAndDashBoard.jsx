@@ -26,16 +26,27 @@ import support from "../../assets/support.png";
 import logout from "../../assets/logout.png";
 import bell from "../../assets/bell.png";
 import user from "../../assets/user.png";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import MyRides from "./MyRides";
 import VehicleDetails from "./VehicleDetails";
 import Earning from "./Earning";
 import Messages from "./Messages";
 import Profile from "./Profile";
 import Support from "./Support";
-import Logout from "./Logout";
 import { MenuItem, Select } from "@mui/material";
 import DriverDashboardHome from "./DriverDashboardHome";
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../constants/axiosInstance";
+import { addUser } from "../../ReducerSlices/user/userSlice";
+import { useSocket } from "../../components/SocketContext";
+import { useEffect } from "react";
+
 const drawerWidth = 240;
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
@@ -126,7 +137,11 @@ export default function DriverNavbarAndDashBoard() {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
   const [selectedOption, setSelectedOption] = React.useState("");
-
+  const [notificationCount, setNotificationCount] = React.useState(0);
+  const { user } = useSelector((state) => state.user);
+  console.log("User is ", user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -141,7 +156,53 @@ export default function DriverNavbarAndDashBoard() {
     console.log("Current path:", location.pathname);
     return location.pathname === route;
   };
+  const { disconnectSocket, socket } = useSocket();
+  React.useEffect(() => {
+    return () => {
+      disconnectSocket();
+    };
+  }, [disconnectSocket]);
+  const logoutHandler = async () => {
+    try {
+      const response = await axiosInstance.get("/logout");
+      const { success, user } = response.data;
+      if (success) {
+        dispatch(addUser({}));
+        await disconnectSocket();
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Logout error", error);
+    }
+  };
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("notifyDriver", ({ receiverId }) => {
+        if (receiverId === user?.id) {
+          setNotificationCount((prevCount) => prevCount + 1);
+          console.log("New notification count", prevCount + 1);
+        }
+      });
+
+      socket.on("receiveMessage", (message) => {
+        if (message.receiverId === user?.id) {
+          setNotificationCount((prevCount) => prevCount + 1);
+          console.log("New notification count", prevCount + 1);
+        }
+      });
+
+      return () => {
+        socket.off("notifyDriver");
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket, user]);
+
+  const handleOpenChat = () => {
+    navigate("/Dashboard/Messages");
+    setNotificationCount(0);
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -177,6 +238,7 @@ export default function DriverNavbarAndDashBoard() {
             <Box
               sx={{
                 display: "flex",
+
                 justifyContent: "center",
                 alignItems: "center",
                 gap: { md: "20px", xs: "7px" },
@@ -185,15 +247,54 @@ export default function DriverNavbarAndDashBoard() {
               <img
                 src={bell}
                 alt="bell"
-                style={{ width: "25px", height: "20px", objectFit: "contain" }}
+                style={{
+                  width: "25px",
+                  height: "25px",
+                  objectFit: "contain",
+                }}
               />
+
+              <Box sx={{ position: "relative" }}>
+                <img
+                  src={message}
+                  alt="message"
+                  style={{
+                    width: "25px",
+                    height: "20px",
+                    objectFit: "contain",
+                  }}
+                  onClick={handleOpenChat}
+                />
+
+                {notificationCount >= 0 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: -10,
+                      right: -5,
+                      backgroundColor: "red",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#fff",
+                      fontSize: "10px",
+                    }}
+                  >
+                    {notificationCount}
+                  </Box>
+                )}
+              </Box>
               <img
-                src={message}
-                alt="message"
-                style={{ width: "25px", height: "20px", objectFit: "contain" }}
-              />
-              <img
-                src={user}
+                src={
+                  user?.profile_pic
+                    ? `../../../server/uploads/${user.profile_pic
+                        .split("\\")
+                        .pop()}`
+                    : profile
+                }
                 alt="user"
                 style={{
                   width: "50px",
@@ -203,12 +304,20 @@ export default function DriverNavbarAndDashBoard() {
               />
               <PlainSelect value={selectedOption} onChange={handleChange}>
                 <MenuItem value={"username"} sx={{ color: "#000000" }}>
-                  Nyambura Wanjiru
+                  {user.firstName + user.lastName}
                 </MenuItem>
-                <MenuItem value={"viewprofile"} sx={{ color: "#000000" }}>
+                <MenuItem
+                  value={"viewprofile"}
+                  sx={{ color: "#000000" }}
+                  onClick={() => navigate("/Dashboard/Profile")}
+                >
                   View Profile
                 </MenuItem>
-                <MenuItem value={"logout"} sx={{ color: "#000000" }}>
+                <MenuItem
+                  value={"logout"}
+                  sx={{ color: "#000000" }}
+                  onClick={logoutHandler}
+                >
                   Logout
                 </MenuItem>
               </PlainSelect>
@@ -513,6 +622,7 @@ export default function DriverNavbarAndDashBoard() {
               }}
               to="/Dashboard/Logout"
               component={Link}
+              onClick={logoutHandler}
             >
               <ListItemIcon
                 sx={{
@@ -557,7 +667,6 @@ export default function DriverNavbarAndDashBoard() {
           <Route path="/Messages" element={<Messages />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Support" element={<Support />} />
-          <Route path="/Logout" element={<Logout />} />
         </Routes>
       </Box>
     </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import "./App.css";
 import Navbar from "./pages/Navbar/Navbar";
@@ -15,8 +15,20 @@ import RiderSignUpMain from "./pages/RiderSignUp/RiderSignUpMain";
 import DriverNavbarAndDashBoard from "./pages/DriverNavbarAndDashbord/DriverNavbarAndDashBoard";
 import RiderNavbar from "./pages/Navbar/RiderNavbar";
 import BookRide from "./pages/RiderComps/BookRide/BookRide";
+import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
+import { useDispatch, useSelector } from "react-redux";
+import { getLoggedInUserAsync } from "./ReducerSlices/user/userSlice";
+import GoogleMapsNew from "./pages/RiderComps/BookRide/GoogleMapsNew";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(getLoggedInUserAsync()).then(() => setIsLoading(false));
+  }, [dispatch]);
+
   return (
     <>
       <Routes>
@@ -31,12 +43,18 @@ function App() {
             </>
           }
         />
+        <Route path="/map" element={<GoogleMapsNew />} />
         <Route
           path="/Dashboard/*"
           element={
-            <>
+            user?.role === "driver" && user?.id ? (
               <DriverNavbarAndDashBoard />
-            </>
+            ) : (
+              <>
+                <AuthNavbar />
+                <LogIn />
+              </>
+            )
           }
         />
         <Route
@@ -45,6 +63,15 @@ function App() {
             <>
               <AuthNavbar />
               <LogIn />
+            </>
+          }
+        />
+        <Route
+          path="/ForgetPassword"
+          element={
+            <>
+              <AuthNavbar />
+              <ForgetPassword />
             </>
           }
         />
@@ -79,11 +106,18 @@ function App() {
         <Route
           path="/Rider/*"
           element={
-            <>
-              <AuthNavbar />
-              <RiderNavbar />
-              <Footer />
-            </>
+            user?.role === "rider" && user?.id ? (
+              <>
+                <AuthNavbar />
+                <RiderNavbar />
+                <Footer />
+              </>
+            ) : (
+              <>
+                <AuthNavbar />
+                <LogIn />
+              </>
+            )
           }
         />
       </Routes>

@@ -21,16 +21,20 @@ const DriverSignUpTwo = ({
   const [mobileOtp, setMobileOtp] = useState("");
   const [phoneNumberVerification, setPhoneNumberVerification] = useState(false);
 
-  // const formatPhoneNumber = (phoneNumber) => {
-  //   if (typeof phoneNumber !== "string") {
-  //     return "";
-  //   }
-  //   const startingDigits = phoneNumber.slice(0, 7);
-  //   const endingDigits = phoneNumber.slice(-2);
-  //   const middleDigits = "*".repeat(phoneNumber.length - 3);
+  const formatPhoneNumber = (phoneNumber) => {
+    if (typeof phoneNumber !== "string") {
+      return "";
+    }
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 10) {
+      return phoneNumber;
+    }
+    const startingDigits = phoneNumber.slice(0, 7);
+    const endingDigits = phoneNumber.slice(-2);
+    const middleDigits = "*".repeat(phoneNumberLength - 3);
 
-  //   return `${startingDigits}${middleDigits}${endingDigits}`;
-  // };
+    return `${startingDigits}${middleDigits}${endingDigits}`;
+  };
 
   const resendVerificationCode = async () => {
     try {
@@ -61,12 +65,12 @@ const DriverSignUpTwo = ({
     }
   };
 
-  const handleCompletePhone = async () => {
+  const handleCompletePhone = async (finalValue) => {
     try {
       if (!confirmation) {
         throw new Error("Confirmation not available");
       }
-      await confirmation.confirm(mobileOtp);
+      await confirmation.confirm(finalValue);
       setPhoneNumberVerification(true);
       console.log("OTP Confirmed successfully");
       handleNext();
@@ -110,7 +114,7 @@ const DriverSignUpTwo = ({
         >
           <Typography variant="subtitle2" sx={{ lineHeight: "30px" }}>
             Enter the 6 digit code sent to you at{" "}
-            {/* {formatPhoneNumber(formData.telephone)} */}
+            {formatPhoneNumber(formData.telephone)}
           </Typography>
         </Box>
         <Box
@@ -125,25 +129,25 @@ const DriverSignUpTwo = ({
             value={mobileOtp}
             onChange={(newValue) => setMobileOtp(newValue)}
             length={6}
-            onComplete={handleCompletePhone}
+            onComplete={(value) => handleCompletePhone(value)}
             validateChar={(character, index) => !isNaN(character)}
             TextFieldsProps={{
               size: "large",
               placeholder: "*",
               sx: {
-                color: "text.primary",
+                color: "#fff",
                 "& label.Mui-focused": {
-                  color: "text.primary",
+                  color: "#fff",
                 },
                 "& label": {
-                  color: "text.primary",
+                  color: "#fff",
                   fontFamily: "Russo One",
                 },
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#F2B705",
                 },
                 "& .MuiOutlinedInput-root": {
-                  color: "text.primary",
+                  color: "#fff",
                   "& fieldset": {
                     borderColor: "#F2B705",
                   },

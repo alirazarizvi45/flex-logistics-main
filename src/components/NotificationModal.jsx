@@ -4,16 +4,24 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-export default function ({ notificationProps, setnotificationProps }) {
-  let navigate = useNavigate();
+import AdjustIcon from "@mui/icons-material/Adjust";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CommonButton from "./CommonButton";
+import CircularProgressWithLabel from "./CircularProgressWithLabel";
+export default function NotificationModal({
+  notificationProps,
+  setnotificationProps,
+  onAcceptRequest,
+}) {
   const handleClose = () => {
     setnotificationProps({ ...notificationProps, modal: false });
   };
-
+  const handleAccept = () => {
+    onAcceptRequest();
+    handleClose();
+  };
   return (
     <Dialog
       open={notificationProps?.modal}
@@ -28,81 +36,162 @@ export default function ({ notificationProps, setnotificationProps }) {
         },
       }}
     >
-      <DialogTitle
-        id="alert-dialog-title"
-        sx={{
-          textAlign: "center",
-          color: notificationProps?.error ? "#FF0101" : "#000",
-        }}
-        variant="h3"
-        lineHeight="2rem"
-        fontSize="24px"
-      >
-        {notificationProps?.error
-          ? "Operation Failed!"
-          : "Congratulations! Success!"}
-      </DialogTitle>
       <DialogContent>
-        <DialogContentText
-          id="alert-dialog-description"
-          style={{ textAlign: "center" }}
-        >
-          <Typography variant="body1" py={3}>
-            {notificationProps?.message}
-          </Typography>
+        <DialogContentText id="alert-dialog-description">
+          <Stack direction="column" alignItems="center"></Stack>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "5px",
+            }}
+          >
+            <AdjustIcon sx={{ color: "#EA3800" }} />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                Pickup Location
+              </Typography>
+              <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
+                {notificationProps.pickupLocation}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "30px",
+              mt: "10px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                ETA
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                color="#5A5A5A"
+                fontWeight="bold"
+                sx={{
+                  wordBreak: "break-word",
+                }}
+              >
+                15 Min to reach
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                Distance
+              </Typography>
+              <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
+                5 km away
+              </Typography>
+            </Box>
+          </Box>
+          <Divider
+            sx={{
+              border: "1px solid #373A41",
+              mt: "20px",
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              gap: "5px",
+              mt: "20px",
+            }}
+          >
+            <LocationOnIcon sx={{ color: "#F2B705" }} />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                DropOff Location
+              </Typography>
+              <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
+                {notificationProps.dropOffLocation}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              border: "1px solid #5A5A5A",
+              display: "flex",
+
+              gap: "20px",
+              marginTop: "20px",
+              padding: "5px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                Booking Type
+              </Typography>
+              <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
+                {notificationProps.travelType}
+              </Typography>
+            </Box>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ backgroundColor: "#5A5A5A" }}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="subtitle1" color="#5A5A5A">
+                Payment Method
+              </Typography>
+              <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
+                {notificationProps.paymentMethod}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "30px",
+            }}
+          >
+            <CircularProgressWithLabel />
+          </Box>
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-        {notificationProps?.error ? (
-          <Button
-            sx={{
-              fontWeight: 400,
-              textTransform: "capitalize",
-              backgroundColor: "#F2B705",
-              color: "#000",
-              fontSize: "16px",
-              fontFamily: ["Russo One", "sans-serif", "sans-serif"].join(","),
-              borderRadius: "47px",
-              width: "331px",
-              height: "39px",
-              boxShadow: "0px 4px 19px rgba(0, 0, 0, 0.65)",
-              "&:hover": {
-                backgroundColor: "#FF0",
-              },
-            }}
-            onClick={handleClose}
-            pt={3}
-          >
-            Try Again
-          </Button>
-        ) : (
-          notificationProps?.buttonTitle && (
-            <Button
-              sx={{
-                fontWeight: 400,
-                textTransform: "capitalize",
-                backgroundColor: "#1ed404",
-                color: "#ffffff",
-                fontSize: "16px",
-                fontFamily: ["Russo One", "sans-serif", "sans-serif"].join(","),
-                borderRadius: "47px",
-                width: "331px",
-                height: "39px",
-                boxShadow: "0px 4px 19px rgba(0, 0, 0, 0.65)",
-                "&:hover": {
-                  backgroundColor: "#1ed404a1",
-                },
-              }}
-              onClick={() => {
-                navigate(notificationProps?.redirect);
-                handleClose();
-              }}
-              pt={3}
-            >
-              {notificationProps?.buttonTitle}
-            </Button>
-          )
-        )}
+        <CommonButton onClick={handleAccept}>Accept Ride</CommonButton>
       </DialogActions>
     </Dialog>
   );

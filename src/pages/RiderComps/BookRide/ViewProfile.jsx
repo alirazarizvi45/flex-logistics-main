@@ -12,35 +12,104 @@ import {
   Avatar,
   Rating,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
+import React, { useEffect, useRef, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { CustomizeInput } from "../../../components/CustomizeInput";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import CommonButton from "../../../components/CommonButton";
+
+import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../../constants/axiosInstance";
+import { addUser } from "../../../ReducerSlices/user/userSlice";
+
 const ViewProfile = () => {
+  const { user } = useSelector((state) => state.user);
   const [showPassword, setShowPassword] = useState(false);
+  const [image, setImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const userId = user?.id;
+  console.log("the user id  is", userId);
+  const dispatch = useDispatch();
   const handlePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-  const fileInputRef = useRef(null);
-  const [uploadedImage, setUploadedImage] = useState(null);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
+  const inputRef = useRef(null);
+
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+
+    telephone: user?.phoneNumber || "",
+    email: user?.email || "",
+    password: "",
+    profile_pic: user?.profile_pic || "",
+  });
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevformData) => ({ ...prevformData, [name]: value }));
   };
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log("Selected file:", file);
-    // Read the file and convert it to a data URL
-    const reader = new FileReader();
-    reader.onload = () => {
-      setUploadedImage(reader.result);
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedFile(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setImage(file);
+    }
+  };
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      if (!user || !user.id) {
+        toast.error("User not logged in or user ID is missing");
+        return;
+      }
+      setLoading(true);
+
+      console.log("User object:", user);
+      console.log("Form data before sending:", formData);
+
+      const multipartData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        multipartData.append(key, value);
+      });
+
+      // Explicitly add the user ID to the form data
+      multipartData.append("id", user.id);
+      multipartData.append("profile_pic", image);
+
+      // Log FormData contents
+      for (let [key, value] of multipartData.entries()) {
+        console.log("FormData entry:", key, value);
+      }
+      const { data } = await axiosInstance.post(
+        "update-user-profile",
+        multipartData
+      );
+      console.log("received data", data);
+      const { success, updatedUser } = data;
+
+      if (success) {
+        dispatch(addUser(updatedUser));
+        toast.success("Profile updated successfully");
+      }
+    } catch (error) {
+      toast.error("Error updating profile");
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
+      <ToastContainer />
       <Container>
         <Grid
           container
@@ -48,7 +117,7 @@ const ViewProfile = () => {
             display: "flex",
 
             gap: "20px",
-            marginTop: "50px",
+            marginTop: "100px",
           }}
         >
           <Grid
@@ -87,7 +156,13 @@ const ViewProfile = () => {
                   >
                     First Name
                   </Typography>
-                  <CustomizeInput placeholder="Your first name" fullWidth />
+                  <CustomizeInput
+                    placeholder="Your  name"
+                    fullWidth
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                  />
                 </Box>
 
                 <Box
@@ -108,7 +183,10 @@ const ViewProfile = () => {
                   <CustomizeInput
                     placeholder="+254 ABCD XXXXX"
                     fullWidth
+                    name="telephone"
                     type="number"
+                    value={formData.telephone}
+                    onChange={handleInputChange}
                   />
                 </Box>
               </Grid>
@@ -125,24 +203,14 @@ const ViewProfile = () => {
                     color="#373A41"
                     fontWeight={600}
                   >
-                    Password
+                    Last Name
                   </Typography>
                   <CustomizeInput
-                    placeholder="********"
-                    type={showPassword ? "text" : "password"}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            onClick={handlePasswordVisibility}
-                            sx={{ color: "#F2B705" }}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
+                    placeholder="Your first name"
+                    fullWidth
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
                   />
                 </Box>
                 <Box
@@ -161,9 +229,50 @@ const ViewProfile = () => {
                     Email
                   </Typography>
                   <CustomizeInput
-                    placeholder="abcd@gmail.com"
-                    type="email"
+                    placeholder="Update Email"
                     fullWidth
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </Box>
+              </Grid>
+              <Grid xs={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+
+                    padding: " 20px",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    color="#373A41"
+                    fontWeight={600}
+                  >
+                    Password
+                  </Typography>
+                  <CustomizeInput
+                    placeholder="Update password"
+                    type={showPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={handlePasswordVisibility}
+                            sx={{ color: "#F2B705" }}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
                   />
                 </Box>
               </Grid>
@@ -174,45 +283,92 @@ const ViewProfile = () => {
                 backgroundColor: "#fff",
                 boxShadow:
                   "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
-                padding: " 30px 20px",
+                padding: " 10px 20px",
                 borderRadius: "50%", // Set borderRadius to 50% for a circle
                 color: "#000",
-                width: "120px", // Example width, adjust as needed
-                height: "120px", // Example height, adjust as needed
-                backgroundImage: uploadedImage
-                  ? `url(${uploadedImage})`
-                  : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                width: "130px", // Example width, adjust as needed
+                height: "130px", // Example height, adjust as needed
+
                 margin: {
-                  lg: "-350px 0px 0px 250px",
+                  lg: "-520px 0px 0px 250px",
                   md: "-350px 0px 0px 200px",
                   sm: "-550px 0px 0px 250px",
                   xs: "-560px 0px 0px 75px",
                 },
               }}
             >
-              <IconButton
+              <Box
                 sx={{
-                  position: "absolute",
-                  margin: "50px 0px 0px 50px",
-                  color: "#fff",
-                  backgroundColor: "#F2B705",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "20px",
                 }}
-                component="label"
+                onClick={() => inputRef.current.click()}
               >
-                <>
-                  <CameraAltIcon onClick={handleUploadClick} />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                </>
-              </IconButton>
+                {user ? (
+                  <>
+                    <img
+                      src={
+                        selectedFile
+                          ? selectedFile
+                          : user?.profile_pic
+                          ? `../../../server/uploads/${user.profile_pic
+                              .split("\\")
+                              .pop()}`
+                          : ""
+                      }
+                      style={{
+                        width: "110px",
+                        height: "110px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                    <IconButton
+                      sx={{
+                        color: "#F2B705",
+                      }}
+                    >
+                      <CameraAltRoundedIcon fontSize="large" />
+                      <input
+                        ref={inputRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleFileChange}
+                      />
+                    </IconButton>
+                  </>
+                ) : (
+                  <IconButton
+                    sx={{
+                      fontSize: "150px",
+                      color: "#F2B705",
+                    }}
+                  >
+                    <CameraAltRoundedIcon
+                      fontSize="small"
+                      variant="contained"
+                    />
+                    <input ref={inputRef} type="file" accept="image/*" hidden />
+                  </IconButton>
+                )}
+              </Box>
             </Box>
+            <Grid xs={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "30px",
+                }}
+              >
+                <CommonButton onClick={handleProfileUpdate}>
+                  Update Information
+                </CommonButton>
+              </Box>
+            </Grid>
           </Grid>
 
           <Grid

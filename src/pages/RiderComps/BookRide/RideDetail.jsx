@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Grid, Rating, Stack, Typography } from "@mui/material";
 import ridedetailmap from "../../../assets/ridedetailmap.png";
 import Nyambura from "../../../assets/nyambura.png";
 import ChatIcon from "@mui/icons-material/Chat";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CommonButton from "../../../components/CommonButton";
+import RiderChatModel from "../../../components/RiderChatModel";
 const RideDetail = () => {
+  const [notifucationProps, setnotificationProps] = useState({
+    error: "",
+    message: "",
+    modal: false,
+  });
   return (
     <>
+      {notifucationProps?.modal && (
+        <RiderChatModel
+          notificationProps={notifucationProps}
+          setnotificationProps={setnotificationProps}
+        />
+      )}
+
       <Box
         sx={{
           background: "#F9F9F9",
@@ -133,6 +146,7 @@ const RideDetail = () => {
                           color: "#000",
                         },
                       }}
+                      onClick={() => setnotificationProps({ modal: true })}
                     >
                       Chat
                     </Button>

@@ -149,6 +149,7 @@ const Home = () => {
           </Box>
         </Container>
       </Element>
+
       <AboutUs />
       <Services />
       <EnjoyTheRide />

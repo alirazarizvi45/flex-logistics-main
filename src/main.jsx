@@ -7,12 +7,18 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme.jsx";
 import "@fontsource/noto-sans";
 import "@fontsource-variable/inter";
+import { Provider } from "react-redux";
+import { store } from "./store/store.jsx";
+import { SocketProvider } from "./components/SocketContext.jsx";
+const serverUrl = "http://localhost:3001";
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <SocketProvider serverUrl={serverUrl}>
+          <App />
+        </SocketProvider>
+      </Provider>
+    </ThemeProvider>
+  </BrowserRouter>
 );

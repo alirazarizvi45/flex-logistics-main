@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/sequelize");
 
-const Drivers = sequelize.define(
-  "Drivers",
+const Users = sequelize.define(
+  "Users",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -20,6 +20,7 @@ const Drivers = sequelize.define(
       charset: "utf8mb4",
       collate: "utf8mb4_general_ci",
     },
+
     dateOfBirth: {
       type: DataTypes.DATEONLY,
     },
@@ -32,22 +33,44 @@ const Drivers = sequelize.define(
     email: {
       type: DataTypes.STRING(75),
     },
+    role: {
+      type: DataTypes.STRING(75),
+    },
+    isOnline: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     password: {
       type: DataTypes.STRING(255),
     },
     address: {
       type: DataTypes.STRING(175),
     },
-    username: {
-      type: DataTypes.STRING(75),
+    license_image: {
+      type: DataTypes.STRING(255),
+    },
+    profile_pic: {
+      type: DataTypes.STRING(255),
+    },
+    cnic_front: {
+      type: DataTypes.STRING(255),
+    },
+    cnic_back: {
+      type: DataTypes.STRING(255),
+    },
+    vehicle_registration_image: {
+      type: DataTypes.STRING(255),
+    },
+    vehicle_image: {
+      type: DataTypes.STRING(255),
     },
   },
   {
-    tableName: "Drivers",
+    tableName: "users",
     timestamps: false, // Add this line to disable createdAt and updatedAt fields
     charset: "utf8mb4",
     collate: "utf8mb4_general_ci",
   }
 );
 
-module.exports = Drivers;
+module.exports = Users;

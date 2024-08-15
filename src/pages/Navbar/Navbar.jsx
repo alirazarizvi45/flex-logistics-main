@@ -196,6 +196,17 @@ const Navbar = () => {
                   >
                     <Typography sx={getLinkStyles("home")}>Home</Typography>
                   </Link>
+                  <Link
+                    activeClass="active"
+                    to="map"
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={-70}
+                    onClick={() => handleLinkClick("home")}
+                  >
+                    <Typography sx={getLinkStyles("home")}>Maps</Typography>
+                  </Link>
 
                   <Link
                     activeClass="active"
@@ -263,7 +274,7 @@ const Navbar = () => {
                   >
                     <Typography sx={getLinkStyles("faq")}>FAQ</Typography>
                   </Link>
-                  <NavLink
+                  {/* <NavLink
                     to="/Rider"
                     style={{
                       textDecoration: "none",
@@ -272,7 +283,7 @@ const Navbar = () => {
                     }}
                   >
                     Rider
-                  </NavLink>
+                  </NavLink> */}
                   {/* <Link
                     to="/Dashboard"
                     sx={{

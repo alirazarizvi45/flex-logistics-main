@@ -1,30 +1,91 @@
-import { Box, Container, Typography } from "@mui/material";
-import React, { useRef, useState } from "react";
+import { Box, Container, IconButton, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import upload from "../../assets/upload.png";
+
 import CommonButton from "../../components/CommonButton";
 
-const IDBack = () => {
-  const fileInputRef = useRef(null);
-  const [uploadedImage, setUploadedImage] = useState(null);
+import { toast, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import UploadIcon from "@mui/icons-material/Upload";
+import axiosInstance from "../../constants/axiosInstance";
+const IDBack = ({ handleNext, newUser }) => {
+  const { user, role } = useSelector((state) => state?.user);
+  console.log(`the user is ${role}`);
+  const userId = user?.id;
+  console.log(userId, "userId");
+  const [errors, setErrors] = useState({
+    cnic_back: "",
+  });
+  const [image, setImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setloading] = useState(null);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
+  const inputRef = { cnic_back: useRef() };
+
+  const validation = () => {
+    let isValid = true;
+    let newErrors = {};
+    if (!image) {
+      isValid = false;
+      newErrors.cnic_back = "Please select your Cnic Back image";
+    }
+    setErrors(newErrors);
+    return isValid;
   };
+
+  const focusOnErrorField = () => {
+    if (errors.cnic_back) {
+      inputRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    focusOnErrorField();
+  }, [errors]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log("Selected file:", file);
-    // Read the file and convert it to a data URL
-    const reader = new FileReader();
-    reader.onload = () => {
-      setUploadedImage(reader.result);
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedFile(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setImage(file);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
+    try {
+      if (validation() && userId) {
+        setloading(true);
+        const formData = new FormData();
+
+        formData.append("cnic_back", image);
+        formData.append("id", userId);
+        const {
+          data: { success },
+        } = await axiosInstance.post("add-cnic-back-image", formData);
+        if (success) {
+          console.log("Image uploaded:", success);
+          toast.success("Image uploaded successfully!");
+        }
+      }
+      setTimeout(() => {
+        handleNext();
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to upload image.", error);
+      console.log("Error uploading image:", error);
+    } finally {
+      setloading(false);
+    }
   };
 
   return (
     <>
+      <ToastContainer />
       <Box
         sx={{
           padding: "40px",
@@ -51,7 +112,7 @@ const IDBack = () => {
           >
             <KeyboardDoubleArrowRightIcon color="primary" />
             <Typography variant="subtitle1">
-              Capture the frontside of your national ID card, ensuring all
+              Capture the backside of your national ID card, ensuring all
               corners are visible.
             </Typography>
           </Box>
@@ -118,16 +179,11 @@ const IDBack = () => {
                 alignItems: "center",
                 gap: "20px",
               }}
+              onClick={() => inputRef.current.click()}
             >
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              {uploadedImage ? (
+              {selectedFile ? (
                 <img
-                  src={uploadedImage}
+                  src={image ? selectedFile : "Logo"}
                   alt="uploaded"
                   style={{
                     width: "150px",
@@ -136,20 +192,24 @@ const IDBack = () => {
                   }}
                 />
               ) : (
-                <img
-                  src={upload}
-                  alt="upload"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    objectFit: "contain",
-                    cursor: "pointer",
+                <IconButton
+                  sx={{
+                    fontSize: "150px",
+                    color: "#fff",
                   }}
-                  onClick={handleUploadClick}
-                />
+                >
+                  <UploadIcon />
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </IconButton>
               )}
               <Typography variant="subtitle2" textAlign="center">
-                Upload Photo
+                Select Photo
               </Typography>
             </Box>
           </Box>
@@ -160,7 +220,7 @@ const IDBack = () => {
             padding: "10px 50px",
           }}
         >
-          <CommonButton fullWidth onClick={handleUploadClick}>
+          <CommonButton fullWidth onClick={handleImageUpload}>
             Upload Photo
           </CommonButton>
         </Box>

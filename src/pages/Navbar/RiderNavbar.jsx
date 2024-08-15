@@ -11,7 +11,6 @@ import {
   Select,
   Stack,
   Toolbar,
-  Typography,
   styled,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -37,7 +36,9 @@ import Review from "../RiderComps/BookRide/Review";
 import { LiveRide } from "../RiderComps/BookRide/LiveRide";
 import ViewProfile from "../RiderComps/BookRide/ViewProfile";
 import EditBooking from "../RiderComps/BookRide/EditBooking";
-
+import axiosInstance from "../../constants/axiosInstance";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../../ReducerSlices/user/userSlice";
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
 
@@ -56,10 +57,14 @@ const PlainSelect = styled(Select)({
     },
   },
 });
+
 const RiderNavbar = () => {
+  const { user } = useSelector((state) => state.user);
+  console.log("the user is", user);
   const [selectedOption, setSelectedOption] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleMenuItemClick = (value) => {
     setSelectedOption(value);
     switch (value) {
@@ -74,6 +79,18 @@ const RiderNavbar = () => {
   };
   const isActiveRoute = (route) => {
     return location.pathname === route;
+  };
+  const logoutHandler = async () => {
+    try {
+      const response = await axiosInstance.get("/logout");
+      const { success, user } = response.data;
+      if (success) {
+        dispatch(addUser({}));
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Logout error", error);
+    }
   };
   return (
     <>
@@ -167,7 +184,13 @@ const RiderNavbar = () => {
                     }}
                   />
                   <img
-                    src={user}
+                    src={
+                      user?.profile_pic
+                        ? `../../../server/uploads/${user.profile_pic
+                            .split("\\")
+                            .pop()}`
+                        : user
+                    }
                     alt="user"
                     style={{
                       width: "50px",
@@ -181,7 +204,7 @@ const RiderNavbar = () => {
                       onClick={() => handleMenuItemClick("username")}
                       sx={{ color: "#000000" }}
                     >
-                      Nyambura Wanjiru
+                      {user.firstName + user.lastName}
                     </MenuItem>
 
                     <MenuItem
@@ -197,7 +220,7 @@ const RiderNavbar = () => {
                       onClick={() => handleMenuItemClick("logout")}
                       sx={{ color: "#000000" }}
                     >
-                      Logout
+                      <span onClick={logoutHandler}>Logout</span>
                     </MenuItem>
                   </PlainSelect>
                 </Box>
