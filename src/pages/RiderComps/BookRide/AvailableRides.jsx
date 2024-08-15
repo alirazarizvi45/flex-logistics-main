@@ -6,14 +6,69 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import availableridemap from "../../../assets/availableridemap.png";
 import mercedes from "../../../assets/mercedes.png";
 import tuktuk from "../../../assets/tuktuk.png";
 import nissan from "../../../assets/nissan.png";
 import CommonButton from "../../../components/CommonButton";
+import { useDispatch, useSelector } from "react-redux";
+import { useSocket } from "../../../components/SocketContext";
+import { setTripInfo } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
 const AvailableRides = () => {
+  const { socket } = useSocket();
+  const { tripInfo } = useSelector((state) => state.tripInfo || {});
+  console.log("trip details in AvailableRides", tripInfo);
+  const dispatch = useDispatch();
+
+  const handleBookRide = () => {
+    try {
+      const tripDetails = {
+        tripId: tripInfo.newTripDetail.tripId,
+        riderId: tripInfo.newTripDetail.riderId,
+        pickupLocation: tripInfo.newTripDetail.pickupLocation,
+        dropOffLocation: tripInfo.newTripDetail.dropOffLocation,
+
+        travelType: tripInfo.newTripDetail.travelType,
+        locationDuration: tripInfo.newTripDetail.locationDuration,
+        locationDistance: tripInfo.newTripDetail.locationDistance,
+        timeToPick: tripInfo.newTripDetail.timeToPick,
+        paymentMethod: tripInfo.newTripDetail.paymentMethod,
+        status: tripInfo.newTripDetail.status,
+      };
+      console.log("trip detailsisss", tripDetails);
+      if (socket) {
+        socket.emit("tripRequest", tripDetails);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    if (socket) {
+      socket.on("tripRequestAccepted", (confirmationMsg) => {
+        if (confirmationMsg?.message) {
+          toast.success(confirmationMsg.message);
+          socket.emit("joinTripRoom", { roomId: confirmationMsg.tripId });
+        } else {
+          toast.error("Failed to receive confirmation message.");
+        }
+      });
+
+      socket.on("joinTripRoom", ({ roomId }) => {
+        console.log(`rider has Joined room: ${roomId}`);
+      });
+      socket.on("tripStatusUpdated", (updatedTripInfo) => {
+        dispatch(setTripInfo(updatedTripInfo));
+      });
+      return () => {
+        socket.off("tripRequestAccepted");
+        socket.off("joinTripRoom");
+        socket.off("tripStatusUpdated");
+      };
+    }
+  }, [socket, dispatch]);
   return (
     <>
       <Box>
@@ -154,7 +209,7 @@ const AvailableRides = () => {
                   textAlign: "right",
                 }}
               >
-                <CommonButton>Book Now</CommonButton>
+                <CommonButton onClick={handleBookRide}>Book Now</CommonButton>
               </Box>
             </Box>
 

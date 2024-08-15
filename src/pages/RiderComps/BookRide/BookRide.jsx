@@ -36,11 +36,12 @@ import {
   saveTripRequestAsync,
   setTripInfo,
 } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
+import { LocationDisabled } from "@mui/icons-material";
 
 const libraries = ["places"];
 const defaultCenter = { lat: -1.2921, lng: 36.8219 }; // Nairobi coordinates
 
-const BookRide = () => {
+const BookRide = ({ handleNext }) => {
   const { user } = useSelector((state) => state.user);
   const { tripInfo } = useSelector((state) => state.tripInfo || {});
   const dispatch = useDispatch();
@@ -69,31 +70,6 @@ const BookRide = () => {
     googleMapsApiKey: "AIzaSyC9ExKVrq6j2bhaNnIGzahM9_0i0dGphXQ", // Replace with your actual Google Maps API key
     libraries,
   });
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("tripRequestAccepted", (confirmationMsg) => {
-        if (confirmationMsg?.message) {
-          toast.success(confirmationMsg.message);
-          socket.emit("joinTripRoom", { roomId: confirmationMsg.tripId });
-        } else {
-          toast.error("Failed to receive confirmation message.");
-        }
-      });
-
-      socket.on("joinTripRoom", ({ roomId }) => {
-        console.log(`rider has Joined room: ${roomId}`);
-      });
-      socket.on("tripStatusUpdated", (updatedTripInfo) => {
-        dispatch(setTripInfo(updatedTripInfo));
-      });
-      return () => {
-        socket.off("tripRequestAccepted");
-        socket.off("joinTripRoom");
-        socket.off("tripStatusUpdated");
-      };
-    }
-  }, [socket, dispatch]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -133,24 +109,30 @@ const BookRide = () => {
       travelType: selectCity,
       pickupLocation: formData.pickupLocation,
       dropOffLocation: formData.dropOffLocation,
+      locationDuration: duration, // Ensure this is correct
+      locationDistance: distance, // Corrected from LocationDistance to locationDistance
       timeToPick: pickupTime,
       paymentMethod: selectPayment,
       status: "pending",
     };
     try {
       const response = await dispatch(saveTripRequestAsync(tripDetails));
+      console.log(response);
+      const { success } = response;
+      if (saveTripRequestAsync.fulfilled.match(response.data)) {
+        toast.success("Trip request save successfully");
 
-      if (saveTripRequestAsync.fulfilled.match(response)) {
-        toast.success("Trip request sent successfully");
-
-        console.log("Trip request sent successfully", response);
+        console.log("Trip request save successfully", response.data);
       }
+      setTimeout(() => {
+        handleNext();
+      }, 3000);
     } catch (error) {
       toast.error("Failed to send trip request");
     }
-    if (socket) {
-      socket.emit("tripRequest", tripDetails);
-    }
+    // if (socket) {
+    //   socket.emit("tripRequest", tripDetails);
+    // }
   };
   const calculateRoute = async () => {
     if (originRef.current.value === "" || destinationRef.current.value === "") {
@@ -223,8 +205,16 @@ const BookRide = () => {
           };
           setUserLocation(userLocation);
           if (map) {
-            map.panTo(userLocation);
+            map.setCenter(userLocation);
             map.setZoom(15);
+            new Marker({
+              position: userLocation,
+              map: map,
+              title: "You",
+              icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              },
+            });
           }
           getAddressFromCoordinates(userLocation.lat, userLocation.lng);
         },
@@ -448,6 +438,18 @@ const BookRide = () => {
                     type="text"
                     placeholder="Enter pickup location"
                     ref={originRef}
+                    style={{
+                      boxSizing: `border-box`,
+                      border: `1px solid transparent`,
+                      width: `240px`,
+                      height: `32px`,
+                      padding: `0 12px`,
+                      borderRadius: `3px`,
+                      boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                      fontSize: `14px`,
+                      outline: `none`,
+                      textOverflow: `ellipses`,
+                    }}
                   />
                 </Autocomplete>
                 <Autocomplete
@@ -460,8 +462,20 @@ const BookRide = () => {
                 >
                   <input
                     type="text"
-                    placeholder="Enter drop-off location"
+                    placeholder="Enter Drop-off Location"
                     ref={destinationRef}
+                    style={{
+                      boxSizing: `border-box`,
+                      border: `1px solid transparent`,
+                      width: `240px`,
+                      height: `32px`,
+                      padding: `0 12px`,
+                      borderRadius: `3px`,
+                      boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                      fontSize: `14px`,
+                      outline: `none`,
+                      textOverflow: `ellipses`,
+                    }}
                   />
                 </Autocomplete>
               </Box>
@@ -648,7 +662,10 @@ const BookRide = () => {
                 //   mapTypeControl: false,
                 //   fullscreenControl: false,
                 // }}
-                onLoad={(map) => (mapRef.current = map)}
+                onLoad={(map) => {
+                  mapRef.current = map;
+                  setMap(map);
+                }}
               >
                 <Marker position={userLocation} />
                 {directionsResponse && (

@@ -68,58 +68,153 @@ const DriverSignUpOne = ({
 
   const handlePhoneNumberVerification = async () => {
     try {
-      if (!validateForm()) {
-        return;
-      }
+      if (!validateForm()) return;
+
       setloading(true);
+
+      // Ensure the recaptcha container is fresh
       const container = document.getElementById("recaptcha-container");
       container.innerHTML = "";
 
-      // Create a new reCAPTCHA container element
-      const newContainer = document.createElement("div");
-      newContainer.id = "recaptcha-container";
-      console.log(newContainer, "appVerifier");
-      const appVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-        // Replace with your reCAPTCHA site key
-        callback: (response) => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
-          // ...
-        },
-        "expired-callback": () => {
-          // Response expired. Ask the user to solve reCAPTCHA again.
-          // ...
-        },
-      });
-      // Render the reCAPTCHA widget explicitly
-      // appVerifier.render().then((widgetId) => {
-      //   window.recaptchaWidgetId = widgetId;
-      // });
+      // Initialize RecaptchaVerifier
+      const appVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        { size: "invisible" },
+        auth
+      );
 
+      // Send verification code
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         formData.telephone,
         appVerifier
       );
 
+      // Handle successful phone number verification
       setConfirmation(confirmationResult);
-      toast.success(`OTP Send to ${formData.telephone}  Successfully`);
-      if (confirmationResult) {
-        handleNext();
-      }
+      handleNext();
     } catch (error) {
-      console.log(error);
-      setnotificationProps({
-        ...notificationProps,
-        modal: true,
-        error: true,
-        message: error.message,
-      });
+      console.error("Error during phone verification:", error);
+      toast.error(error.message || "An error occurred during verification");
     } finally {
-      setloading(false); // Make sure to set loading to false even if there's an error
+      setloading(false);
     }
   };
 
+  // const handlePhoneNumberVerification = async () => {
+  //   try {
+  //     if (!validateForm()) {
+  //       return;
+  //     }
+  //     setloading(true);
+  //     const container = document.getElementById("recaptcha-container");
+  //     container.innerHTML = "";
+
+  //     // Create a new reCAPTCHA container element
+  //     const newContainer = document.createElement("div");
+  //     newContainer.id = "recaptcha-container";
+  //     console.log(newContainer, "appVerifier");
+  //     const appVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+  //       size: "invisible",
+  //       // Replace with your reCAPTCHA site key
+  //       callback: (response) => {
+  //         // reCAPTCHA solved, allow signInWithPhoneNumber.
+  //         // ...
+  //       },
+  //       "expired-callback": () => {
+  //         // Response expired. Ask the user to solve reCAPTCHA again.
+  //         // ...
+  //       },
+  //     });
+  //     // Render the reCAPTCHA widget explicitly
+  //     // appVerifier.render().then((widgetId) => {
+  //     //   window.recaptchaWidgetId = widgetId;
+  //     // });
+
+  //     const confirmationResult = await signInWithPhoneNumber(
+  //       auth,
+  //       formData.telephone,
+  //       appVerifier
+  //     );
+
+  //     setConfirmation(confirmationResult);
+  //     toast.success(`OTP Send to ${formData.telephone}  Successfully`);
+  //     if (confirmationResult) {
+  //       handleNext();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setloading(false); // Make sure to set loading to false even if there's an error
+  //   }
+  // };
+
+  // const handlePhoneNumberVerification = async () => {
+  //   try {
+  //     if (!validateForm()) {
+  //       return;
+  //     }
+  //     setloading(true);
+
+  //     // Check and ensure the auth instance is initialized
+  //     if (!auth) {
+  //       throw new Error("Firebase Auth not initialized");
+  //     }
+
+  //     // Clear existing reCAPTCHA verifier if present
+  //     if (window.recaptchaVerifier) {
+  //       window.recaptchaVerifier.clear();
+  //     }
+
+  //     // Initialize the RecaptchaVerifier with proper settings
+  //     window.recaptchaVerifier = new RecaptchaVerifier(
+  //       "recaptcha-container",
+  //       {
+  //         size: "invisible",
+  //         callback: (response) => {
+  //           console.log("reCAPTCHA solved", response);
+  //         },
+  //         "expired-callback": () => {
+  //           console.log("reCAPTCHA expired");
+  //           toast.error("reCAPTCHA expired. Please try again.");
+  //         },
+  //       },
+  //       auth
+  //     ); // Pass the correct auth instance
+
+  //     // Render the reCAPTCHA
+  //     await window.recaptchaVerifier.render();
+
+  //     // Initiate the phone number verification
+  //     const confirmationResult = await signInWithPhoneNumber(
+  //       auth,
+  //       formData.telephone,
+  //       window.recaptchaVerifier
+  //     );
+
+  //     // Handle successful verification
+  //     setConfirmation(confirmationResult);
+  //     toast.success(`OTP sent to ${formData.telephone} successfully`);
+
+  //     if (confirmationResult) {
+  //       handleNext();
+  //     }
+  //   } catch (error) {
+  //     // Log and display errors
+  //     console.error("Error in phone verification:", error);
+  //     toast.error(error.message || "An error occurred during verification");
+  //   } finally {
+  //     setloading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (window.recaptchaVerifier) {
+  //       window.recaptchaVerifier.clear();
+  //     }
+  //   };
+  // }, []);
   return (
     <>
       <Box>

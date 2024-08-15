@@ -12,7 +12,7 @@ const cors = require("cors");
 const session = require("express-session");
 const passport = require("./src/config/passport");
 const sequelize = require("./src/config/sequelize");
-const Converstation = require("./src/models/conversation");
+
 const path = require("path");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const { createServer } = require("http");
@@ -110,7 +110,7 @@ const io = new Server(server, {
 // Store socket IDs for drivers and riders
 const driverSocketMap = new Map();
 const riderSocketMap = new Map();
-
+const driverLocations = new Map();
 io.on("connection", (socket) => {
   let userRole = null; // To store the role of the user for disconnection
   let userId = null;
@@ -118,6 +118,18 @@ io.on("connection", (socket) => {
   socket.on("setRole", async ({ id, role }) => {
     userId = id;
     userRole = role; // Store the role for later use in disconnection
+
+    socket.on("driverLocation", (locationData) => {
+      const { driverId, latitude, longitude } = locationData;
+      driverLocations.set(driverId, {
+        latitude,
+        longitude,
+        socketId: socket.id,
+      });
+      console.log(
+        `updated location for driver ${driverId}: ${latitude}, ${longitude}`
+      );
+    });
 
     const updated = await setUserOnlineStatusController({
       userId,
@@ -243,20 +255,23 @@ io.on("connection", (socket) => {
     const { roomId, text, role, receiverId } = msg;
     console.log(`Message received in room ${roomId} from ${role}: ${text}`);
     io.to(roomId).emit("receiveMessage", msg);
-    if (role === "rider") {
-      const driverSocketId = driverSocketMap.get(receiverId);
-      if (driverSocketId) {
-        io.to(driverSocketId).emit("newMessageNotification", {
-          roomId,
-          senderId: msg.senderId,
-          receiverId,
-        });
-      }
-    }
+    // if (role === "rider") {
+    //   const driverSocketId = driverSocketMap.get(receiverId);
+    //   if (driverSocketId) {
+    //     io.to(driverSocketId).emit("newMessageNotification", {
+    //       roomId,
+    //       senderId: msg.senderId,
+    //       receiverId,
+    //     });
+    //   }
+    // }
   });
   socket.on("joinRoom", async ({ roomId }) => {
     socket.join(roomId);
     console.log(`Socket ${socket.id} joined room ${roomId}`);
+  });
+  socket.on("enterChat", ({ tripId }) => {
+    socket.to(tripId).emit("enterChat");
   });
   socket.on("leaveRoom", async ({ roomId }) => {
     socket.join(roomId);

@@ -7,16 +7,16 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import CommonButton from "../../../components/CommonButton";
 import RiderChatModel from "../../../components/RiderChatModel";
 const RideDetail = () => {
-  const [notifucationProps, setnotificationProps] = useState({
+  const [notificationProps, setnotificationProps] = useState({
     error: "",
     message: "",
     modal: false,
   });
   return (
     <>
-      {notifucationProps?.modal && (
+      {notificationProps?.modal && (
         <RiderChatModel
-          notificationProps={notifucationProps}
+          notificationProps={notificationProps}
           setnotificationProps={setnotificationProps}
         />
       )}

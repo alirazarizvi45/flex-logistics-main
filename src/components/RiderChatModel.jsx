@@ -80,6 +80,9 @@ const RiderChatModel = ({ notificationProps, setnotificationProps }) => {
           return prevMessages;
         });
       });
+      socket.on("enterChat", () => {
+        fetchMessages();
+      });
       socket.emit("requestOnlineStatus", { roomId: tripId });
       socket.on("userOnlineStatus", ({ userId, isOnline }) => {
         setOnlineStatus((prevStatus) => ({
@@ -90,6 +93,7 @@ const RiderChatModel = ({ notificationProps, setnotificationProps }) => {
       return () => {
         socket.off("receiveMessage");
         socket.off("userOnlineStatus");
+        socket.off("enterChat");
         socket.emit("leaveRoom", { roomId: tripId });
       };
     }
@@ -123,7 +127,7 @@ const RiderChatModel = ({ notificationProps, setnotificationProps }) => {
           roomId: tripId,
           receiverId: tripInfo?.driverId,
         });
-        // notify driver about msgs
+
         socket.emit("notifyDriver", {
           receiverId: tripInfo?.driverId,
         });

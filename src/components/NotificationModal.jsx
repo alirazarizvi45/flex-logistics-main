@@ -86,7 +86,7 @@ export default function NotificationModal({
                   wordBreak: "break-word",
                 }}
               >
-                15 Min to reach
+                {notificationProps.locationDuration}
               </Typography>
             </Box>
             <Box
@@ -99,7 +99,7 @@ export default function NotificationModal({
                 Distance
               </Typography>
               <Typography variant="subtitle1" color="#5A5A5A" fontWeight="bold">
-                5 km away
+                {notificationProps.locationDistance}
               </Typography>
             </Box>
           </Box>

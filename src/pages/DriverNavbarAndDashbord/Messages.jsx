@@ -62,7 +62,9 @@ const Messages = () => {
       socket.on("receiveMessage", (message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       });
-
+      socket.on("enterChat", () => {
+        fetchMessages();
+      });
       socket.emit("requestOnlineStatus", { roomId: tripId });
 
       socket.on("userOnlineStatus", ({ userId, isOnline }) => {
@@ -75,6 +77,7 @@ const Messages = () => {
       return () => {
         socket.off("receiveMessage");
         socket.off("userOnlineStatus");
+        socket.off("enterChat");
         socket.emit("leaveRoom", { roomId: tripId });
       };
     }
@@ -99,7 +102,12 @@ const Messages = () => {
         );
         console.log("Response from save-conversation:", response.data);
 
-        socket.emit("sendMessage", { ...newMessage, roomId: tripId });
+        socket.emit("sendMessage", {
+          ...newMessage,
+          roomId: tripId,
+          receiverId: tripInfo?.riderId,
+        });
+        socket.emit("notifyRider", { receiverId: tripInfo?.riderId });
         setCurrentMessage("");
       } catch (error) {
         console.log("Error:", error);

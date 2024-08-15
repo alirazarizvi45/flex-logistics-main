@@ -22,18 +22,22 @@ import {
 } from "../../ReducerSlices/tripInfo/tripInfoSlice";
 import axiosInstance from "../../constants/axiosInstance";
 import DriverGoogleMap from "./DriverGoogleMap";
+import { useJsApiLoader } from "@react-google-maps/api";
 const DriverDashboardHome = () => {
   const { user } = useSelector((state) => state.user);
-
+  const [driverLocation, setDriverLocation] = useState(null);
   console.log(user, "user");
   const { tripInfo, status: tripStatus } = useSelector(
     (state) => state.tripInfo || {}
   );
   console.log("tripInfo in driver dashboard", tripInfo);
   const dispatch = useDispatch();
+
   const { socket, socketId } = useSocket();
+
   const driverSocketId = socketId;
   console.log(driverSocketId, "driver socket id");
+
   const [notificationProps, setnotificationProps] = useState({
     error: "",
     message: "",
@@ -42,6 +46,8 @@ const DriverDashboardHome = () => {
     dropOffLocation: "",
     travelType: "",
     paymentMethod: "",
+    locationDuration: "",
+    locationDistance: "",
   });
 
   useEffect(() => {
@@ -52,6 +58,8 @@ const DriverDashboardHome = () => {
           riderId,
           pickupLocation,
           dropOffLocation,
+          locationDuration,
+          locationDistance,
           travelType,
           paymentMethod,
         } = tripDetails;
@@ -64,6 +72,8 @@ const DriverDashboardHome = () => {
           tripId,
           pickupLocation,
           dropOffLocation,
+          locationDuration,
+          locationDistance,
           travelType,
           paymentMethod,
           riderId,
@@ -82,6 +92,7 @@ const DriverDashboardHome = () => {
       console.log("Socket is not initialized.");
     }
   }, [socket]);
+
   useEffect(() => {
     if (notificationProps.tripId && tripStatus === "succeeded") {
       dispatch(getTripRequestAsync(notificationProps.tripId));
@@ -134,6 +145,29 @@ const DriverDashboardHome = () => {
     }
   };
 
+  const getDirverLocation = () => {
+    try {
+      if (socket && user) {
+        navigator.geolocation.watchPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          const location = { latitude, longitude };
+          setDriverLocation(location);
+          socket.emit("driverLocation", {
+            driverId: user.id,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          });
+          console.log("Driver location:", location);
+        });
+      }
+    } catch (error) {
+      console.log("Error getting driver location:", error);
+    }
+  };
+
+  useEffect(() => {
+    getDirverLocation();
+  }, [socket, user]);
   return (
     <>
       {notificationProps?.modal && (

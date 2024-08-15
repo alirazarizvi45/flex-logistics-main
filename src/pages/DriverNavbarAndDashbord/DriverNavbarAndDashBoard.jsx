@@ -139,6 +139,7 @@ export default function DriverNavbarAndDashBoard() {
   const [selectedOption, setSelectedOption] = React.useState("");
   const [notificationCount, setNotificationCount] = React.useState(0);
   const { user } = useSelector((state) => state.user);
+  const { tripInfo } = useSelector((state) => state.tripInfo || {});
   console.log("User is ", user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -187,8 +188,11 @@ export default function DriverNavbarAndDashBoard() {
 
       socket.on("receiveMessage", (message) => {
         if (message.receiverId === user?.id) {
-          setNotificationCount((prevCount) => prevCount + 1);
-          console.log("New notification count", prevCount + 1);
+          if (location.pathname !== "/Dashboard/Messages") {
+            setNotificationCount((prevCount) => prevCount + 1);
+          } else {
+            setNotificationCount(0);
+          }
         }
       });
 
@@ -202,6 +206,7 @@ export default function DriverNavbarAndDashBoard() {
   const handleOpenChat = () => {
     navigate("/Dashboard/Messages");
     setNotificationCount(0);
+    socket.emit("enterChat", { tripId: tripInfo?.tripId });
   };
   return (
     <Box sx={{ display: "flex" }}>

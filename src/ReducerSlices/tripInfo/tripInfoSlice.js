@@ -8,7 +8,7 @@ export const saveTripRequestAsync = createAsyncThunk(
       "/save-trip-request",
       tripDetails
     );
-    return response.data;
+    return response.data.data;
   }
 );
 export const getTripRequestAsync = createAsyncThunk(

@@ -13,7 +13,7 @@ import {
   Toolbar,
   styled,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import message from "../../assets/message.png";
 
@@ -39,6 +39,9 @@ import EditBooking from "../RiderComps/BookRide/EditBooking";
 import axiosInstance from "../../constants/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../ReducerSlices/user/userSlice";
+import { useSocket } from "../../components/SocketContext";
+import RiderChatModel from "../../components/RiderChatModel";
+import MainBookRide from "../RiderComps/BookRide/MainBookRide";
 const PlainSelect = styled(Select)({
   backgroundColor: "transparent",
 
@@ -60,11 +63,22 @@ const PlainSelect = styled(Select)({
 
 const RiderNavbar = () => {
   const { user } = useSelector((state) => state.user);
+
+  const { tripInfo } = useSelector((state) => state.tripInfo || {});
   console.log("the user is", user);
+
   const [selectedOption, setSelectedOption] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [notificationProps, setnotificationProps] = useState({
+    error: "",
+    message: "",
+    modal: false,
+  });
+  const [notificationCount, setNotificationCount] = React.useState(0);
+  const { socket } = useSocket();
+
   const handleMenuItemClick = (value) => {
     setSelectedOption(value);
     switch (value) {
@@ -77,9 +91,11 @@ const RiderNavbar = () => {
         break;
     }
   };
+
   const isActiveRoute = (route) => {
     return location.pathname === route;
   };
+
   const logoutHandler = async () => {
     try {
       const response = await axiosInstance.get("/logout");
@@ -92,8 +108,58 @@ const RiderNavbar = () => {
       console.error("Logout error", error);
     }
   };
+
+  useEffect(() => {
+    if (socket && user?.id) {
+      const handleNotification = () => {
+        if (!notificationProps.modal) {
+          setNotificationCount((prevCount) => prevCount + 1);
+        }
+      };
+
+      socket.on("notifyRider", ({ receiverId }) => {
+        if (receiverId === user.id) {
+          handleNotification();
+        }
+      });
+
+      socket.on("receiveMessage", (message) => {
+        if (message.receiverId === user.id) {
+          handleNotification();
+        }
+      });
+
+      return () => {
+        socket.off("notifyRider");
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket, user, notificationProps.modal]);
+  const handleOpenChat = () => {
+    setnotificationProps({ ...notificationProps, modal: true });
+    setNotificationCount(0);
+    if (socket && tripInfo?.tripId) {
+      socket.emit("enterChat", { tripId: tripInfo.tripId });
+    }
+  };
+
+  const [activeStep, setActiveStep] = useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevStep) => Math.min(prevStep + 1, 1));
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevStep) => Math.max(prevStep - 1, 0));
+  };
   return (
     <>
+      {notificationProps?.modal && (
+        <RiderChatModel
+          notificationProps={notificationProps}
+          setnotificationProps={setnotificationProps}
+        />
+      )}
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="relative" sx={{ background: "#fff" }}>
@@ -121,6 +187,7 @@ const RiderNavbar = () => {
                       sx={{
                         marginRight: 5,
                       }}
+                      onClick={handleBack}
                     >
                       <WestIcon />
                       Back
@@ -174,15 +241,40 @@ const RiderNavbar = () => {
                       objectFit: "contain",
                     }}
                   />
-                  <img
-                    src={message}
-                    alt="message"
-                    style={{
-                      width: "25px",
-                      height: "20px",
-                      objectFit: "contain",
-                    }}
-                  />
+                  <Box sx={{ position: "relative" }}>
+                    <img
+                      src={message}
+                      alt="message"
+                      style={{
+                        width: "25px",
+                        height: "20px",
+                        objectFit: "contain",
+                        cursor: "pointer",
+                      }}
+                      onClick={handleOpenChat}
+                    />
+
+                    {notificationCount >= 0 && (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: -10,
+                          right: -5,
+                          backgroundColor: "red",
+                          borderRadius: "50%",
+                          width: "20px",
+                          height: "20px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          color: "#fff",
+                          fontSize: "10px",
+                        }}
+                      >
+                        {notificationCount}
+                      </Box>
+                    )}
+                  </Box>
                   <img
                     src={
                       user?.profile_pic
@@ -244,16 +336,20 @@ const RiderNavbar = () => {
               path="/BookRide"
               element={
                 <>
-                  <BookRide />
-                  <br />
-                  <AvailableRides />
+                  <MainBookRide
+                    handleNext={handleNext}
+                    handleBack={handleBack}
+                    activeStep={activeStep}
+                  />
+
+                  {/* <AvailableRides />
                   <br />
                   <RideDetail />
                   <br />
                   <Review />
                   <br />
                   <LiveRide />
-                  <br />
+                  <br /> */}
                 </>
               }
             />

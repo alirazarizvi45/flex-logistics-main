@@ -9,6 +9,8 @@ const RiderTripDetailController = async (req, res, next) => {
       travelType,
       pickupLocation,
       dropOffLocation,
+      locationDistance,
+      locationDuration,
       timeToPick,
       paymentMethod,
     } = req.body;
@@ -18,6 +20,8 @@ const RiderTripDetailController = async (req, res, next) => {
       !travelType ||
       !pickupLocation ||
       !dropOffLocation ||
+      !locationDistance ||
+      !locationDuration ||
       !timeToPick ||
       !paymentMethod
     ) {
@@ -42,10 +46,11 @@ const RiderTripDetailController = async (req, res, next) => {
       travelType,
       pickupLocation,
       dropOffLocation,
+      locationDistance,
+      locationDuration,
       timeToPick,
       paymentMethod,
       status: "pending",
-
       riderFirstName: riderDetails.firstName,
       riderLastName: riderDetails.lastName,
       riderPhoneNumber: riderDetails.phoneNumber,

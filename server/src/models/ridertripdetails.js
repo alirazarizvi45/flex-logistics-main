@@ -30,6 +30,14 @@ const RiderTripDetails = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    locationDuration: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    locationDistance: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
     timeToPick: {
       type: DataTypes.STRING(255),
       allowNull: false,
