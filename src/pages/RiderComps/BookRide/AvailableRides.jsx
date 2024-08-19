@@ -6,7 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import availableridemap from "../../../assets/availableridemap.png";
 import mercedes from "../../../assets/mercedes.png";
@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSocket } from "../../../components/SocketContext";
 import { setTripInfo } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
 import { toast, ToastContainer } from "react-toastify";
-import { getUserByIdAsync } from "../../../ReducerSlices/user/userSlice";
 const AvailableRides = () => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
@@ -25,42 +24,9 @@ const AvailableRides = () => {
   console.log("trip details in AvailableRides", tripInfo);
   const { nearbyDrivers } = useSelector((state) => state.nearbyDrivers || {});
   console.log("nearby drivers", nearbyDrivers);
-  const { userDetails } = useSelector((state) => state.user || {});
   const driverIds = nearbyDrivers.map((driver) => driver.driverId);
   console.log("Driver IDs:", driverIds);
-  const [driversDetails, setDriversDetails] = useState([]);
 
-  useEffect(() => {
-    if (nearbyDrivers && nearbyDrivers.length > 0) {
-      nearbyDrivers.forEach((driver) => {
-        dispatch(getUserByIdAsync(driver.driverId));
-      });
-    }
-  }, [dispatch, nearbyDrivers]);
-  useEffect(() => {
-    if (userDetails) {
-      setDriversDetails((prevDetails) => {
-        const existingDriverIndex = prevDetails.findIndex(
-          (d) => d.id === userDetails.id
-        );
-        if (existingDriverIndex !== -1) {
-          // Update existing driver
-          const updatedDetails = [...prevDetails];
-          updatedDetails[existingDriverIndex] = userDetails;
-          return updatedDetails;
-        } else {
-          // Add new driver
-          return [...prevDetails, userDetails];
-        }
-      });
-    }
-  }, [userDetails]);
-
-  useEffect(() => {
-    if (driversDetails.length > 0) {
-      console.log("Full drivers details:", driversDetails);
-    }
-  }, [driversDetails]);
   const handleBookRide = () => {
     try {
       const tripDetails = {
@@ -100,7 +66,6 @@ const AvailableRides = () => {
       socket.on("tripStatusUpdated", (updatedTripInfo) => {
         dispatch(setTripInfo(updatedTripInfo));
       });
-      dispatch();
       return () => {
         socket.off("tripRequestAccepted");
         socket.off("joinTripRoom");
