@@ -41,9 +41,6 @@ const DriverGoogleMap = ({ pickupLocation }) => {
                 position: driverPos,
                 map: mapInstanceRef.current,
                 title: "Your Location",
-                icon: {
-                  url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                },
               });
             },
             (error) => {

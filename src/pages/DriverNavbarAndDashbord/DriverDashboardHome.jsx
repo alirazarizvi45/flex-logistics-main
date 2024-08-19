@@ -1,109 +1,142 @@
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import map from "../../assets/map1.png";
-import profilelogo from "../../assets/profilelogo.png";
-import goll from "../../assets/redgol.png";
-import loaction from "../../assets/location.png";
 import Grid from "@mui/system/Unstable_Grid/Grid";
-import { Button, Divider, Typography } from "@mui/material";
+import { Button, Divider, Skeleton, Typography } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import PhoneIcon from "@mui/icons-material/Phone";
+import profilelogo from "../../assets/profilelogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import AdjustIcon from "@mui/icons-material/Adjust";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { useDispatch, useSelector } from "react-redux";
 import NotificationModal from "../../components/NotificationModal";
 import { useSocket } from "../../components/SocketContext";
-import { useDispatch, useSelector } from "react-redux";
-import GoogleMap from "../RiderComps/BookRide/GoogleMap";
 import {
   getTripRequestAsync,
   setTripInfo,
   updateTripStatus,
 } from "../../ReducerSlices/tripInfo/tripInfoSlice";
 import axiosInstance from "../../constants/axiosInstance";
-import DriverGoogleMap from "./DriverGoogleMap";
-import { useJsApiLoader } from "@react-google-maps/api";
+
 const DriverDashboardHome = () => {
   const { user } = useSelector((state) => state.user);
-  const [driverLocation, setDriverLocation] = useState(null);
-  console.log(user, "user");
   const { tripInfo, status: tripStatus } = useSelector(
     (state) => state.tripInfo || {}
   );
-  console.log("tripInfo in driver dashboard", tripInfo);
   const dispatch = useDispatch();
-
   const { socket, socketId } = useSocket();
 
-  const driverSocketId = socketId;
-  console.log(driverSocketId, "driver socket id");
-
+  const [driverLocation, setDriverLocation] = useState(null);
   const [notificationProps, setnotificationProps] = useState({
     error: "",
     message: "",
     modal: false,
+    tripId: "",
     pickupLocation: "",
     dropOffLocation: "",
-    travelType: "",
-    paymentMethod: "",
     locationDuration: "",
     locationDistance: "",
+    travelType: "",
+    paymentMethod: "",
+    riderId: "",
   });
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("tripRequest", (tripDetails) => {
-        const {
-          tripId,
-          riderId,
-          pickupLocation,
-          dropOffLocation,
-          locationDuration,
-          locationDistance,
-          travelType,
-          paymentMethod,
-        } = tripDetails;
-        console.log("tripDetails is ", tripDetails);
-        console.log("Trip ID is:", tripId);
-        setnotificationProps({
-          error: "",
-          message: "",
-          modal: true,
-          tripId,
-          pickupLocation,
-          dropOffLocation,
-          locationDuration,
-          locationDistance,
-          travelType,
-          paymentMethod,
-          riderId,
-        });
-      });
-      socket.on("joinTripRoom", ({ roomId }) => {
-        console.log(`Joined room: ${roomId}`);
-        // Handle room joining logic here if needed
-      });
-      return () => {
-        socket.off("tripRequest");
-        socket.off("tripRequestAccepted");
-        socket.off("joinTripRoom");
-      };
-    } else {
-      console.log("Socket is not initialized.");
-    }
-  }, [socket]);
+  const mapRef = useRef();
+  const libraries = ["places"];
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyC9ExKVrq6j2bhaNnIGzahM9_0i0dGphXQ", // Replace with your actual Google Maps API key
+    libraries,
+  });
 
+  // Load trip data when the notification modal is triggered
   useEffect(() => {
     if (notificationProps.tripId && tripStatus === "succeeded") {
       dispatch(getTripRequestAsync(notificationProps.tripId));
     }
-  }, [dispatch, notificationProps.tripId]);
+  }, [dispatch, notificationProps.tripId, tripStatus]);
+
+  // Handle socket events for trip requests and joining rooms
+  useEffect(() => {
+    if (socket) {
+      socket.on("tripRequest", handleTripRequest);
+      socket.on("joinTripRoom", handleJoinTripRoom);
+
+      return () => {
+        socket.off("tripRequest", handleTripRequest);
+        socket.off("joinTripRoom", handleJoinTripRoom);
+      };
+    }
+  }, [socket]);
+
+  const handleTripRequest = (tripDetails) => {
+    const {
+      tripId,
+      riderId,
+      pickupLocation,
+      dropOffLocation,
+      locationDuration,
+      locationDistance,
+      travelType,
+      paymentMethod,
+    } = tripDetails;
+
+    setnotificationProps({
+      error: "",
+      message: "",
+      modal: true,
+      tripId,
+      pickupLocation,
+      dropOffLocation,
+      locationDuration,
+      locationDistance,
+      travelType,
+      paymentMethod,
+      riderId,
+    });
+  };
+
+  const handleJoinTripRoom = ({ roomId }) => {
+    console.log(`Joined room: ${roomId}`);
+  };
+
+  const getDriverLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const location = { lat: latitude, lng: longitude };
+          setDriverLocation(location);
+
+          if (mapRef.current) {
+            mapRef.current.setCenter(location);
+            mapRef.current.setZoom(15);
+          }
+
+          socket.emit("driverLocation", {
+            driverId: user.id,
+            latitude,
+            longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting driver location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  };
+
+  useEffect(() => {
+    if (isLoaded) {
+      getDriverLocation();
+    }
+  }, [isLoaded, socket, user]);
 
   const handleAcceptTripRequest = async () => {
-    console.log("Accept button clicked");
-    if (driverSocketId) {
+    if (socketId) {
       try {
-        // Update trip status in the database
         const response = await axiosInstance.put(
           `/update-trip-status/${notificationProps.tripId}`,
           {
@@ -113,14 +146,9 @@ const DriverDashboardHome = () => {
         );
 
         if (response.data.success) {
-          // Update Redux store
           const updatedTripInfo = response.data.data;
-          console.log("updated trip info", updatedTripInfo);
           dispatch(setTripInfo(updatedTripInfo));
 
-          //send updated trip info to rider
-
-          // Prepare confirmation message
           const confirmationMsg = {
             tripId: notificationProps.tripId,
             riderId: notificationProps.riderId,
@@ -128,12 +156,10 @@ const DriverDashboardHome = () => {
             message: `Your trip request has been accepted by ${user.firstName} ${user.lastName}.`,
           };
 
-          // Emit acceptance to server
           socket.emit("tripRequestAccepted", confirmationMsg);
           socket.emit("updateTripStatus", updatedTripInfo);
           socket.emit("joinTripRoom", { roomId: confirmationMsg.tripId });
           dispatch(updateTripStatus("accepted"));
-          console.log("Trip accepted successfully");
         } else {
           console.error("Failed to accept trip");
         }
@@ -141,33 +167,14 @@ const DriverDashboardHome = () => {
         console.error("Error accepting trip:", error);
       }
     } else {
-      console.log("Driver socket ID not available yet.");
+      console.error("Driver socket ID not available yet.");
     }
   };
 
-  const getDirverLocation = () => {
-    try {
-      if (socket && user) {
-        navigator.geolocation.watchPosition((position) => {
-          const { latitude, longitude } = position.coords;
-          const location = { latitude, longitude };
-          setDriverLocation(location);
-          socket.emit("driverLocation", {
-            driverId: user.id,
-            latitude: location.latitude,
-            longitude: location.longitude,
-          });
-          console.log("Driver location:", location);
-        });
-      }
-    } catch (error) {
-      console.log("Error getting driver location:", error);
-    }
-  };
+  if (!isLoaded) {
+    return <Skeleton />;
+  }
 
-  useEffect(() => {
-    getDirverLocation();
-  }, [socket, user]);
   return (
     <>
       {notificationProps?.modal && (
@@ -177,11 +184,7 @@ const DriverDashboardHome = () => {
           onAcceptRequest={handleAcceptTripRequest}
         />
       )}
-      <Box
-        sx={{
-          minHeight: "100vh",
-        }}
-      >
+      <Box sx={{ minHeight: "100vh" }}>
         <Container maxWidth="xl">
           <Box>
             <Typography variant="h3" sx={{ color: "#000" }} pb={2}>
@@ -189,7 +192,16 @@ const DriverDashboardHome = () => {
             </Typography>
             <Grid container spacing={8}>
               <Grid item md={8} xs={12}>
-                <DriverGoogleMap />
+                <GoogleMap
+                  center={driverLocation}
+                  zoom={15}
+                  mapContainerStyle={{ width: "100%", height: "100%" }}
+                  onLoad={(map) => {
+                    mapRef.current = map;
+                  }}
+                >
+                  {driverLocation && <Marker position={driverLocation} />}
+                </GoogleMap>
               </Grid>
 
               <Grid item md={4} xs={12}>

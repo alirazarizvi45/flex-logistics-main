@@ -119,18 +119,6 @@ io.on("connection", (socket) => {
     userId = id;
     userRole = role; // Store the role for later use in disconnection
 
-    socket.on("driverLocation", (locationData) => {
-      const { driverId, latitude, longitude } = locationData;
-      driverLocations.set(driverId, {
-        latitude,
-        longitude,
-        socketId: socket.id,
-      });
-      console.log(
-        `updated location for driver ${driverId}: ${latitude}, ${longitude}`
-      );
-    });
-
     const updated = await setUserOnlineStatusController({
       userId,
       isOnline: true,
@@ -139,6 +127,12 @@ io.on("connection", (socket) => {
     if (updated) {
       if (role === "driver") {
         driverSocketMap.set(userId, socket.id);
+        driverLocations.set(userId, {
+          latitude: null,
+          longitude: null,
+          socketId: socket.id,
+          isOnline: true, // Store online status here
+        });
       } else if (role === "rider") {
         riderSocketMap.set(userId, socket.id);
       }
@@ -176,6 +170,58 @@ io.on("connection", (socket) => {
         `The ${role} with user id ${userId} and socket id ${socket.id} connected.`
       );
     }
+
+    socket.on("driverLocation", (locationData) => {
+      const { driverId, latitude, longitude } = locationData;
+      if (driverLocations.has(driverId)) {
+        const driverInfo = driverLocations.get(driverId);
+        driverInfo.latitude = latitude;
+        driverInfo.longitude = longitude;
+        driverLocations.set(driverId, driverInfo); // Update driver location and keep online status
+        console.log(
+          `Updated location for driver ${driverId}: ${latitude}, ${longitude}`
+        );
+      }
+    });
+    socket.on("getNearbyDrivers", ({ riderLocation }, callback) => {
+      const nearbyDrivers = Array.from(driverLocations.entries())
+        .filter(([driverId, driverInfo]) => {
+          const distance = calculateDistance(riderLocation, {
+            latitude: driverInfo.latitude,
+            longitude: driverInfo.longitude,
+          });
+          return distance < 5 && driverInfo.isOnline; // Check both distance and isOnline status
+        })
+        .map(([driverId, driverInfo]) => ({
+          driverId,
+          latitude: driverInfo.latitude,
+          longitude: driverInfo.longitude,
+          socketId: driverInfo.socketId,
+        }));
+
+      callback(nearbyDrivers);
+      console.log("Nearby drivers are:", nearbyDrivers);
+    });
+
+    function calculateDistance(loc1, loc2) {
+      // Implement the Haversine formula or any other distance calculation method
+      const R = 6371; // Radius of the Earth in kilometers
+      const dLat = toRadians(loc2.latitude - loc1.latitude);
+      const dLng = toRadians(loc2.longitude - loc1.longitude);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(loc1.latitude)) *
+          Math.cos(toRadians(loc2.latitude)) *
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
+
+    function toRadians(degrees) {
+      return degrees * (Math.PI / 180);
+    }
   });
   socket.on("disconnect", async () => {
     if (userId) {
@@ -186,6 +232,7 @@ io.on("connection", (socket) => {
       if (updated) {
         if (userRole === "driver") {
           driverSocketMap.delete(userId);
+          driverLocations.delete(userId);
         } else if (userRole === "rider") {
           riderSocketMap.delete(userId);
         }
@@ -206,15 +253,25 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const driverId =
-      availableDrivers[Math.floor(Math.random() * availableDrivers.length)];
-    const driverSocketId = driverSocketMap.get(driverId);
-    if (driverSocketId) {
-      io.to(driverSocketId).emit("tripRequest", {
-        ...tripDetails,
-      });
-      console.log("Trip request sent to driver:", driverId);
-    }
+    // const driverId =
+    //   availableDrivers[Math.floor(Math.random() * availableDrivers.length)];
+    // const driverSocketId = driverSocketMap.get(driverId);
+    // if (driverSocketId) {
+    //   io.to(driverSocketId).emit("tripRequest", {
+    //     ...tripDetails,
+    //   });
+    //   console.log("Trip request sent to driver:", driverId);
+    // }
+
+    availableDrivers.forEach((driverId) => {
+      const driverSocketId = driverSocketMap.get(driverId);
+      if (driverSocketId) {
+        io.to(driverSocketId).emit("tripRequest", {
+          ...tripDetails,
+        });
+        console.log("Trip request sent to driver:", driverId);
+      }
+    });
   });
 
   socket.on("tripRequestAccepted", (confirmationMsg) => {

@@ -30,13 +30,18 @@ import CommonButton from "../../../components/CommonButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useSocket } from "../../../components/SocketContext";
+
 import { v4 as uuidv4 } from "uuid";
 import {
   saveTripRequestAsync,
   setTripInfo,
 } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
 import { LocationDisabled } from "@mui/icons-material";
+import {
+  getNearbyDriversAsync,
+  setNearbyDrivers,
+} from "../../../ReducerSlices/nearbyDrivers/nearbyDriversSlice";
+import { useSocket } from "../../../components/SocketContext";
 
 const libraries = ["places"];
 const defaultCenter = { lat: -1.2921, lng: 36.8219 }; // Nairobi coordinates
@@ -46,7 +51,7 @@ const BookRide = ({ handleNext }) => {
   const { tripInfo } = useSelector((state) => state.tripInfo || {});
   const dispatch = useDispatch();
   const riderId = user?.id;
-
+  const { socket } = useSocket();
   const [selectCity, setSelectCity] = useState("City to city");
   const [pickupTime, setPickupTime] = useState("Now");
   const [selectPayment, setSelectPayment] = useState("");
@@ -58,13 +63,11 @@ const BookRide = ({ handleNext }) => {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [map, setMap] = useState(null);
-  const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const [userLocation, setUserLocation] = useState(defaultCenter);
 
   const originRef = useRef();
   const destinationRef = useRef();
   const mapRef = useRef();
-  const { socket } = useSocket();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyC9ExKVrq6j2bhaNnIGzahM9_0i0dGphXQ", // Replace with your actual Google Maps API key
@@ -109,31 +112,48 @@ const BookRide = ({ handleNext }) => {
       travelType: selectCity,
       pickupLocation: formData.pickupLocation,
       dropOffLocation: formData.dropOffLocation,
-      locationDuration: duration, // Ensure this is correct
-      locationDistance: distance, // Corrected from LocationDistance to locationDistance
+      locationDuration: duration,
+      locationDistance: distance,
       timeToPick: pickupTime,
       paymentMethod: selectPayment,
       status: "pending",
     };
+
     try {
       const response = await dispatch(saveTripRequestAsync(tripDetails));
-      console.log(response);
-      const { success } = response;
-      if (saveTripRequestAsync.fulfilled.match(response.data)) {
-        toast.success("Trip request save successfully");
 
-        console.log("Trip request save successfully", response.data);
+      if (saveTripRequestAsync.fulfilled.match(response)) {
+        toast.success("Trip request saved successfully");
+
+        console.log("Trip request saved successfully", response.payload);
+
+        // Handle geolocation and fetching nearby drivers
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+          const riderLocation = { latitude, longitude };
+
+          // Dispatch to fetch nearby drivers
+          const driversResponse = await dispatch(
+            getNearbyDriversAsync({ riderLocation, socket })
+          );
+          console.log(" getNearbyDriversAsync respone is ", driversResponse);
+          if (getNearbyDriversAsync.fulfilled.match(driversResponse)) {
+            dispatch(setNearbyDrivers(driversResponse.payload)); // Save nearby drivers in the store
+          }
+        });
+
+        setTimeout(() => {
+          handleNext();
+        }, 3000);
+      } else {
+        toast.error("Failed to save trip request");
       }
-      setTimeout(() => {
-        handleNext();
-      }, 3000);
     } catch (error) {
       toast.error("Failed to send trip request");
+      console.error("Error in handleTripRequest:", error);
     }
-    // if (socket) {
-    //   socket.emit("tripRequest", tripDetails);
-    // }
   };
+
   const calculateRoute = async () => {
     if (originRef.current.value === "" || destinationRef.current.value === "") {
       return;
