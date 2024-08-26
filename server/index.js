@@ -172,16 +172,27 @@ io.on("connection", (socket) => {
     }
 
     socket.on("driverLocation", (locationData) => {
-      const { driverId, latitude, longitude } = locationData;
+      const { driverId, driverName, vehicleImage, latitude, longitude } =
+        locationData;
       if (driverLocations.has(driverId)) {
         const driverInfo = driverLocations.get(driverId);
+        driverInfo.driverName = driverName;
+        driverInfo.vehicleImage = vehicleImage;
         driverInfo.latitude = latitude;
         driverInfo.longitude = longitude;
+
         driverLocations.set(driverId, driverInfo); // Update driver location and keep online status
         console.log(
           `Updated location for driver ${driverId}: ${latitude}, ${longitude}`
         );
       }
+      io.emit("updatedDriverLocation", {
+        driverId,
+        driverName,
+        vehicleImage,
+        latitude,
+        longitude,
+      });
     });
     socket.on("getNearbyDrivers", ({ riderLocation }, callback) => {
       const nearbyDrivers = Array.from(driverLocations.entries())
@@ -190,13 +201,14 @@ io.on("connection", (socket) => {
             latitude: driverInfo.latitude,
             longitude: driverInfo.longitude,
           });
-          return distance < 5 && driverInfo.isOnline; // Check both distance and isOnline status
+          return distance < 5; // Check both distance and isOnline status
         })
         .map(([driverId, driverInfo]) => ({
           driverId,
+          driverName: driverInfo.driverName,
+          vehicleImage: driverInfo.vehicleImage,
           latitude: driverInfo.latitude,
           longitude: driverInfo.longitude,
-          socketId: driverInfo.socketId,
         }));
 
       callback(nearbyDrivers);
@@ -233,6 +245,8 @@ io.on("connection", (socket) => {
         if (userRole === "driver") {
           driverSocketMap.delete(userId);
           driverLocations.delete(userId);
+          console.log(`Driver ${userId} went offline`);
+          io.emit("driverOffline", { userId });
         } else if (userRole === "rider") {
           riderSocketMap.delete(userId);
         }
@@ -293,7 +307,11 @@ io.on("connection", (socket) => {
         confirmationMsg.riderId
       );
     }
-
+    // io.emit("notifyDriversTripRequestAccepted", {
+    //   tripId: confirmationMsg.tripId,
+    //   driverId: confirmationMsg.driverId,
+    //   message: `Trip request from rider has been accepted by ${confirmationMsg.driverId}.`,
+    // });
     const roomId = confirmationMsg.tripId;
     socket.join(roomId);
     if (riderSocketId) {
@@ -306,22 +324,22 @@ io.on("connection", (socket) => {
 
       io.to(updatedTripInfo.tripId).emit("tripStatusUpdated", updatedTripInfo);
     });
+    // Notify all drivers except the one who accepted the trip
+    driverSocketMap.forEach((driverSocketId, driverId) => {
+      if (driverId !== confirmationMsg.driverId) {
+        io.to(driverSocketId).emit("notifyDriversTripRequestAccepted", {
+          tripId: confirmationMsg.tripId,
+          message: `The trip request has been accepted by ${confirmationMsg.driverId}.`,
+        });
+      }
+    });
   });
 
   socket.on("sendMessage", (msg) => {
     const { roomId, text, role, receiverId } = msg;
     console.log(`Message received in room ${roomId} from ${role}: ${text}`);
     io.to(roomId).emit("receiveMessage", msg);
-    // if (role === "rider") {
-    //   const driverSocketId = driverSocketMap.get(receiverId);
-    //   if (driverSocketId) {
-    //     io.to(driverSocketId).emit("newMessageNotification", {
-    //       roomId,
-    //       senderId: msg.senderId,
-    //       receiverId,
-    //     });
-    //   }
-    // }
+    console.log(`Message sent to room ${roomId}`);
   });
   socket.on("joinRoom", async ({ roomId }) => {
     socket.join(roomId);

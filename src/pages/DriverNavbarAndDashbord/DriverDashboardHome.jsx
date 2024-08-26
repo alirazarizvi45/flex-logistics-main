@@ -18,12 +18,14 @@ import {
   updateTripStatus,
 } from "../../ReducerSlices/tripInfo/tripInfoSlice";
 import axiosInstance from "../../constants/axiosInstance";
+import { toast, ToastContainer } from "react-toastify";
 
 const DriverDashboardHome = () => {
   const { user } = useSelector((state) => state.user);
   const { tripInfo, status: tripStatus } = useSelector(
     (state) => state.tripInfo || {}
   );
+
   const dispatch = useDispatch();
   const { socket, socketId } = useSocket();
 
@@ -61,7 +63,10 @@ const DriverDashboardHome = () => {
     if (socket) {
       socket.on("tripRequest", handleTripRequest);
       socket.on("joinTripRoom", handleJoinTripRoom);
-
+      socket.on(
+        "notifyDriversTripRequestAccepted",
+        handleNotifyDriversTripRequestAccepted
+      );
       return () => {
         socket.off("tripRequest", handleTripRequest);
         socket.off("joinTripRoom", handleJoinTripRoom);
@@ -100,6 +105,11 @@ const DriverDashboardHome = () => {
     console.log(`Joined room: ${roomId}`);
   };
 
+  const handleNotifyDriversTripRequestAccepted = ({ message }) => {
+    // Notify the driver and close the modal
+    toast.success(message);
+    setnotificationProps({ ...notificationProps, modal: false });
+  };
   const getDriverLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
@@ -115,6 +125,8 @@ const DriverDashboardHome = () => {
 
           socket.emit("driverLocation", {
             driverId: user.id,
+            vehicleImage: user.vehicle_image,
+            driverName: user.firstName + " " + user.lastName,
             latitude,
             longitude,
           });
@@ -160,6 +172,7 @@ const DriverDashboardHome = () => {
           socket.emit("updateTripStatus", updatedTripInfo);
           socket.emit("joinTripRoom", { roomId: confirmationMsg.tripId });
           dispatch(updateTripStatus("accepted"));
+          setnotificationProps({ ...notificationProps, modal: false });
         } else {
           console.error("Failed to accept trip");
         }
@@ -177,6 +190,7 @@ const DriverDashboardHome = () => {
 
   return (
     <>
+      <ToastContainer />
       {notificationProps?.modal && (
         <NotificationModal
           notificationProps={notificationProps}

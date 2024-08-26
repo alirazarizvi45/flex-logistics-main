@@ -6,7 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import availableridemap from "../../../assets/availableridemap.png";
 import mercedes from "../../../assets/mercedes.png";
@@ -17,38 +17,127 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSocket } from "../../../components/SocketContext";
 import { setTripInfo } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
 import { toast, ToastContainer } from "react-toastify";
+import { getUserByIdAsync } from "../../../ReducerSlices/user/userSlice";
+import {
+  getNearbyDriversAsync,
+  removeDrivers,
+  updatedDriverLocation,
+} from "../../../ReducerSlices/nearbyDrivers/nearbyDriversSlice";
 const AvailableRides = () => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
+  const [riderLocation, setRiderLocation] = useState(null);
   const { tripInfo } = useSelector((state) => state.tripInfo || {});
+  const { user, userDetails } = useSelector((state) => state.user || {});
+  console.log("userDetails details in userDetails", userDetails);
   console.log("trip details in AvailableRides", tripInfo);
   const { nearbyDrivers } = useSelector((state) => state.nearbyDrivers || {});
   console.log("nearby drivers", nearbyDrivers);
-  const driverIds = nearbyDrivers.map((driver) => driver.driverId);
-  console.log("Driver IDs:", driverIds);
 
-  const handleBookRide = () => {
+  useEffect(() => {
     try {
-      const tripDetails = {
-        tripId: tripInfo.newTripDetail.tripId,
-        riderId: tripInfo.newTripDetail.riderId,
-        pickupLocation: tripInfo.newTripDetail.pickupLocation,
-        dropOffLocation: tripInfo.newTripDetail.dropOffLocation,
-        travelType: tripInfo.newTripDetail.travelType,
-        locationDuration: tripInfo.newTripDetail.locationDuration,
-        locationDistance: tripInfo.newTripDetail.locationDistance,
-        timeToPick: tripInfo.newTripDetail.timeToPick,
-        paymentMethod: tripInfo.newTripDetail.paymentMethod,
-        status: tripInfo.newTripDetail.status,
-      };
-      console.log("trip detailsisss", tripDetails);
-      if (socket) {
-        socket.emit("tripRequest", tripDetails);
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setRiderLocation({ latitude, longitude });
+          console.log("Rider Location:", { latitude, longitude });
+        });
+      } else {
+        console.log("Geolocation is not supported by your browser");
       }
     } catch (error) {
-      console.log("error", error);
+      console.log("Geolocation is not supported by your browser", error);
     }
-  };
+  }, []);
+
+  // useEffect(() => {
+  //   if (socket && riderLocation) {
+  //     dispatch(getNearbyDriversAsync({ riderLocation, socket }));
+  //     socket.on(
+  //       "updatedDriverLocation",
+  //       ({ driverId, driverName, vehicleImage, latitude, longitude }) => {
+  //         dispatch(
+  //           updatedDriverLocation({
+  //             driverId,
+  //             driverName,
+  //             vehicleImage,
+  //             latitude,
+  //             longitude,
+  //           })
+  //         );
+  //       }
+  //     );
+  //     socket.on("driverOffline", (userId) => {
+  //       dispatch(removeDrivers(userId));
+  //     });
+  //   }
+  //   return () => {
+  //     if (socket) {
+  //       socket.off("updatedDriverLocation");
+  //       socket.off("driverOffline");
+  //     }
+  //   };
+  // }, [socket, riderLocation, dispatch]);
+  useEffect(() => {
+    if (socket && riderLocation) {
+      const fetchNearbyDrivers = () => {
+        dispatch(getNearbyDriversAsync({ riderLocation, socket }));
+      };
+
+      fetchNearbyDrivers();
+      const intervalId = setInterval(fetchNearbyDrivers, 5000);
+
+      socket.on(
+        "updatedDriverLocation",
+        ({ driverId, driverName, vehicleImage, latitude, longitude }) => {
+          dispatch(
+            updatedDriverLocation({
+              driverId,
+              driverName,
+              vehicleImage,
+              latitude,
+              longitude,
+            })
+          );
+        }
+      );
+
+      socket.on("driverOffline", (userId) => {
+        dispatch(removeDrivers(userId));
+      });
+
+      return () => {
+        clearInterval(intervalId);
+        if (socket) {
+          socket.off("updatedDriverLocation");
+          socket.off("driverOffline");
+        }
+      };
+    }
+  }, [socket, riderLocation, dispatch]);
+
+  // const handleBookRide = () => {
+  //   try {
+  //     const tripDetails = {
+  //       tripId: tripInfo.newTripDetail.tripId,
+  //       riderId: tripInfo.newTripDetail.riderId,
+  //       pickupLocation: tripInfo.newTripDetail.pickupLocation,
+  //       dropOffLocation: tripInfo.newTripDetail.dropOffLocation,
+  //       travelType: tripInfo.newTripDetail.travelType,
+  //       locationDuration: tripInfo.newTripDetail.locationDuration,
+  //       locationDistance: tripInfo.newTripDetail.locationDistance,
+  //       timeToPick: tripInfo.newTripDetail.timeToPick,
+  //       paymentMethod: tripInfo.newTripDetail.paymentMethod,
+  //       status: tripInfo.newTripDetail.status,
+  //     };
+  //     console.log("trip detailsisss", tripDetails);
+  //     if (socket) {
+  //       socket.emit("tripRequest", tripDetails);
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
   useEffect(() => {
     if (socket) {
       socket.on("tripRequestAccepted", (confirmationMsg) => {
@@ -66,6 +155,7 @@ const AvailableRides = () => {
       socket.on("tripStatusUpdated", (updatedTripInfo) => {
         dispatch(setTripInfo(updatedTripInfo));
       });
+
       return () => {
         socket.off("tripRequestAccepted");
         socket.off("joinTripRoom");
@@ -102,361 +192,137 @@ const AvailableRides = () => {
           }}
         >
           <Grid item md={6} xs={12}>
-            <Box
-              sx={{
-                boxShadow:
-                  "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
-                padding: " 30px 20px",
-                borderRadius: "7px",
-              }}
-            >
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: { sm: "row", xs: "column" },
-                  justifyContent: { sm: "space-between", xs: "center" },
-                  alignItems: { sm: "inherit", xs: "center" },
-
-                  gap: { sm: "0px", xs: "20px" },
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: "20px",
-                  }}
-                >
+            {nearbyDrivers?.map((driver) => {
+              return (
+                <Box>
                   <Box
+                    key={driver.driverId}
                     sx={{
-                      width: "100px",
-                      height: "100px",
+                      boxShadow:
+                        "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
+                      padding: " 30px 20px",
+                      borderRadius: "7px",
                     }}
                   >
-                    <img
-                      src={mercedes}
-                      alt="mercedes"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                    }}
-                  >
-                    <Box
+                    <Stack
                       sx={{
                         display: "flex",
-                        alignItems: "baseline",
-                        gap: "5px",
-                      }}
-                    >
-                      <Typography variant="h4" color="#373A41">
-                        Mercedes
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="light"
-                        color="#373A41"
-                      >
-                        6 Person
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
+                        flexDirection: { sm: "row", xs: "column" },
+                        justifyContent: { sm: "space-between", xs: "center" },
+                        alignItems: { sm: "inherit", xs: "center" },
 
-                        gap: "5px",
+                        gap: { sm: "0px", xs: "20px" },
                       }}
                     >
-                      <Typography variant="h4" color="#373A41">
-                        Juma Mwangi
-                      </Typography>
                       <Box
                         sx={{
                           display: "flex",
+                          gap: "20px",
                         }}
                       >
-                        <Rating
-                          name="half-rating"
-                          defaultValue={5}
-                          precision={0.5}
-                        />
-                        <Typography variant="subtitle1" color="#373A41">
-                          (4.5)
+                        <Box
+                          sx={{
+                            width: "100px",
+                            height: "100px",
+                          }}
+                        >
+                          <img
+                            src={
+                              driver?.vehicleImage
+                                ? `../../../server/uploads/${driver.vehicleImage
+                                    .split("\\")
+                                    .pop()}`
+                                : mercedes
+                            }
+                            alt="mercedes"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                            }}
+                          />
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "baseline",
+                              gap: "5px",
+                            }}
+                          >
+                            <Typography variant="h4" color="#373A41">
+                              Mercedes
+                            </Typography>
+                            <Typography
+                              variant="subtitle1"
+                              fontWeight="light"
+                              color="#373A41"
+                            >
+                              6 Person
+                            </Typography>
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+
+                              gap: "5px",
+                            }}
+                          >
+                            <Typography variant="h4" color="#373A41">
+                              {driver?.driverName}
+                            </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                              }}
+                            >
+                              <Rating
+                                name="half-rating"
+                                defaultValue={5}
+                                precision={0.5}
+                              />
+                              <Typography variant="subtitle1" color="#373A41">
+                                (4.5)
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Box>
+                        <Typography variant="h3" color="#F2B705">
+                          656 Ksh
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          color="#373A41"
+                          textAlign="right"
+                        >
+                          6 min away
                         </Typography>
                       </Box>
-                    </Box>
-                  </Box>
-                </Box>
-
-                <Box>
-                  <Typography variant="h3" color="#F2B705">
-                    656 Ksh
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="#373A41"
-                    textAlign="right"
-                  >
-                    6 min away
-                  </Typography>
-                </Box>
-              </Stack>
-              <Box
-                sx={{
-                  marginTop: "20px",
-                  textAlign: "right",
-                }}
-              >
-                <CommonButton onClick={handleBookRide}>Book Now</CommonButton>
-              </Box>
-            </Box>
-
-            <Box
-              sx={{
-                boxShadow:
-                  "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
-                padding: " 30px 20px",
-                borderRadius: "7px",
-                marginTop: "20px",
-              }}
-            >
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: { sm: "row", xs: "column" },
-                  justifyContent: { sm: "space-between", xs: "center" },
-                  alignItems: { sm: "inherit", xs: "center" },
-
-                  gap: { sm: "0px", xs: "20px" },
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: "20px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  >
-                    <img
-                      src={tuktuk}
-                      alt="tuktuk"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                    }}
-                  >
+                    </Stack>
                     <Box
                       sx={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        gap: "5px",
+                        marginTop: "20px",
+                        textAlign: "right",
                       }}
                     >
-                      <Typography variant="h4" color="#373A41">
-                        Tuktuk
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="light"
-                        color="#373A41"
-                      >
-                        3 Person
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-
-                        gap: "5px",
-                      }}
-                    >
-                      <Typography variant="h4" color="#373A41">
-                        Nyambura Wanjiru
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                        }}
-                      >
-                        <Rating
-                          name="half-rating"
-                          defaultValue={4}
-                          precision={0.5}
-                        />
-                        <Typography variant="subtitle1" color="#373A41">
-                          (4)
-                        </Typography>
-                      </Box>
+                      <CommonButton></CommonButton>
                     </Box>
                   </Box>
                 </Box>
-
-                <Box>
-                  <Typography variant="h3" color="#F2B705">
-                    456 Ksh
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="#373A41"
-                    textAlign="right"
-                  >
-                    6 min away
-                  </Typography>
-                </Box>
-              </Stack>
-              <Box
-                sx={{
-                  marginTop: "20px",
-                  textAlign: "right",
-                }}
-              >
-                <CommonButton>Book Now</CommonButton>
-              </Box>
-            </Box>
-
-            <Box
-              sx={{
-                boxShadow:
-                  "5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(0, 0, 0, 0.1)",
-                padding: " 30px 20px",
-                borderRadius: "7px",
-                marginTop: "20px",
-              }}
-            >
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: { sm: "row", xs: "column" },
-                  justifyContent: { sm: "space-between", xs: "center" },
-                  alignItems: { sm: "inherit", xs: "center" },
-
-                  gap: { sm: "0px", xs: "20px" },
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-
-                    gap: "20px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  >
-                    <img
-                      src={nissan}
-                      alt="nissan"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        gap: "5px",
-                      }}
-                    >
-                      <Typography variant="h4" color="#373A41">
-                        Nisan
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="light"
-                        color="#373A41"
-                      >
-                        14 Person
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-
-                        gap: "5px",
-                      }}
-                    >
-                      <Typography variant="h4" color="#373A41">
-                        Nyambura Wanjiru
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                        }}
-                      >
-                        <Rating
-                          name="half-rating"
-                          defaultValue={4}
-                          precision={0.5}
-                        />
-                        <Typography variant="subtitle1" color="#373A41">
-                          (4.0)
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-
-                <Box>
-                  <Typography variant="h3" color="#F2B705">
-                    1056 Ksh
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="#373A41"
-                    textAlign="right"
-                  >
-                    6 min away
-                  </Typography>
-                </Box>
-              </Stack>
-              <Box
-                sx={{
-                  marginTop: "20px",
-                  textAlign: "right",
-                }}
-              >
-                <CommonButton>Book Now</CommonButton>
-              </Box>
-            </Box>
+              );
+            })}
           </Grid>
+
           <Grid item md={6} xs={12}>
             <Box>
               <img

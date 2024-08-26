@@ -36,11 +36,7 @@ import {
   saveTripRequestAsync,
   setTripInfo,
 } from "../../../ReducerSlices/tripInfo/tripInfoSlice";
-import { LocationDisabled } from "@mui/icons-material";
-import {
-  getNearbyDriversAsync,
-  setNearbyDrivers,
-} from "../../../ReducerSlices/nearbyDrivers/nearbyDriversSlice";
+
 import { useSocket } from "../../../components/SocketContext";
 
 const libraries = ["places"];
@@ -63,6 +59,7 @@ const BookRide = ({ handleNext }) => {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [map, setMap] = useState(null);
+  const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const [userLocation, setUserLocation] = useState(defaultCenter);
 
   const originRef = useRef();
@@ -127,21 +124,23 @@ const BookRide = ({ handleNext }) => {
 
         console.log("Trip request saved successfully", response.payload);
 
-        // Handle geolocation and fetching nearby drivers
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          const { latitude, longitude } = position.coords;
-          const riderLocation = { latitude, longitude };
+        // // Handle geolocation and fetching nearby drivers
+        // navigator.geolocation.getCurrentPosition(async (position) => {
+        //   const { latitude, longitude } = position.coords;
+        //   const riderLocation = { latitude, longitude };
 
-          // Dispatch to fetch nearby drivers
-          const driversResponse = await dispatch(
-            getNearbyDriversAsync({ riderLocation, socket })
-          );
-          console.log(" getNearbyDriversAsync respone is ", driversResponse);
-          if (getNearbyDriversAsync.fulfilled.match(driversResponse)) {
-            dispatch(setNearbyDrivers(driversResponse.payload)); // Save nearby drivers in the store
-          }
-        });
-
+        //   // Dispatch to fetch nearby drivers
+        //   const driversResponse = await dispatch(
+        //     getNearbyDriversAsync({ riderLocation, socket })
+        //   );
+        //   console.log(" getNearbyDriversAsync respone is ", driversResponse);
+        //   if (getNearbyDriversAsync.fulfilled.match(driversResponse)) {
+        //     dispatch(setNearbyDrivers(driversResponse.payload)); // Save nearby drivers in the store
+        //   }
+        // });
+        if (socket) {
+          socket.emit("tripRequest", tripDetails);
+        }
         setTimeout(() => {
           handleNext();
         }, 3000);

@@ -25,18 +25,33 @@ const nearbyDriversSlice = createSlice({
   name: "nearbyDrivers",
   initialState: {
     nearbyDrivers: [],
-    status: "idle",
+    status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null,
     lastUpdated: null,
   },
   reducers: {
-    setNearbyDrivers: (state, action) => {
-      state.nearbyDrivers = action.payload;
-      state.lastUpdated = new Date().toISOString();
+    updatedDriverLocation: (state, action) => {
+      const { driverId, driverName, vehicleImage, latitude, longitude } =
+        action.payload;
+      const driverIndex = state.nearbyDrivers.findIndex(
+        (driver) => driver.driverId === driverId
+      );
+      if (driverIndex !== -1) {
+        state.nearbyDrivers[driverIndex] = {
+          ...state.nearbyDrivers[driverIndex],
+          driverName,
+          vehicleImage,
+          location: {
+            latitude,
+            longitude,
+          },
+        };
+      }
     },
-    clearNearbyDrivers: (state) => {
-      state.nearbyDrivers = [];
-      state.lastUpdated = null;
+    removeDrivers: (state, action) => {
+      state.nearbyDrivers = state.nearbyDrivers.filter(
+        (driver) => driver.userId !== action.payload
+      );
     },
   },
   extraReducers: (builder) => {
@@ -46,8 +61,9 @@ const nearbyDriversSlice = createSlice({
         state.error = null;
       })
       .addCase(getNearbyDriversAsync.fulfilled, (state, action) => {
+        console.log("Nearby drivers received:", action.payload);
         state.status = "succeeded";
-        state.nearbyDrivers = action.payload;
+        state.nearbyDrivers = action.payload; // Set the list of nearby drivers
         state.lastUpdated = new Date().toISOString();
         state.error = null;
       })
@@ -58,7 +74,7 @@ const nearbyDriversSlice = createSlice({
   },
 });
 
-export const { setNearbyDrivers, clearNearbyDrivers } =
+export const { updatedDriverLocation, removeDrivers } =
   nearbyDriversSlice.actions;
 
 export default nearbyDriversSlice.reducer;
